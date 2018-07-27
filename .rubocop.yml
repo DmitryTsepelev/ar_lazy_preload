@@ -15,3 +15,10 @@ Documentation:
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Metrics/LineLength:
+  Max: 100
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'

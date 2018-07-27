@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     ar_lazy_preload (0.1.0)
-      rails (~> 5.2.0)
+      rails (>= 5.2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -53,6 +53,9 @@ GEM
     builder (3.2.3)
     concurrent-ruby (1.0.5)
     crass (1.0.4)
+    db-query-matchers (0.9.0)
+      activesupport (>= 4.0, <= 6.0)
+      rspec (~> 3.0)
     diff-lcs (1.3)
     erubi (1.7.1)
     globalid (0.4.1)
@@ -160,6 +163,7 @@ PLATFORMS
 
 DEPENDENCIES
   ar_lazy_preload!
+  db-query-matchers
   rspec
   rspec-rails
   rubocop
