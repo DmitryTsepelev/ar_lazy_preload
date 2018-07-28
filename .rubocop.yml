@@ -6,6 +6,7 @@ AllCops:
   Exclude:
     - 'bin/**/*'
     - 'vendor/**/*'
+    - 'gemfiles/**/*.gemfile'
     - 'Rakefile'
     - 'Gemfile'
     - '*.gemspec'

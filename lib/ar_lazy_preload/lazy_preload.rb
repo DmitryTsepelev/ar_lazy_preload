@@ -5,13 +5,7 @@ module ArLazyPreload
     extend ActiveSupport::Concern
 
     included do
-      def lazy_preload_values
-        get_value(:lazy_preload)
-      end
-
-      def lazy_preload_values=(value)
-        set_value(:lazy_preload, value)
-      end
+      attr_accessor :lazy_preload_values
 
       def lazy_preload(*args)
         check_if_method_has_arguments!(:lazy_preload, args)
