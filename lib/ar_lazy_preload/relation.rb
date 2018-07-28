@@ -11,8 +11,9 @@ module ArLazyPreload
       alias_method :old_load, :load
 
       def load
+        need_context = !loaded?
         old_load_result = old_load
-        setup_lazy_preload_context
+        setup_lazy_preload_context if need_context && lazy_preload_values.any?
         old_load_result
       end
 
@@ -24,7 +25,7 @@ module ArLazyPreload
       def lazy_preload!(*args)
         args.reject!(&:blank?)
         args.flatten!
-        self.lazy_preload_values |= args
+        self.lazy_preload_values += args
         self
       end
 

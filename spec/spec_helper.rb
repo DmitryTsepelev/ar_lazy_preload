@@ -19,3 +19,5 @@ ActiveRecord::Base.establish_connection(
 
 load File.dirname(__FILE__) + "/schema.rb"
 require File.dirname(__FILE__) + "/models.rb"
+
+ActiveRecord::Base.logger = Logger.new(STDOUT) if ENV["SQL"]
