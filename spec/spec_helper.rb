@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "coveralls"
+Coveralls.wear!
+
 require "active_record"
 require "db_query_matchers"
 require "ar_lazy_preload"
