@@ -5,13 +5,11 @@ module ArLazyPreload
     extend ActiveSupport::Concern
 
     included do
-      alias_method :load_target_source, :load_target
+      alias_method :old_load_target, :load_target
 
       def load_target
-        if owner.respond_to?(:perform_lazy_preloading)
-          owner.perform_lazy_preloading(reflection.name)
-        end
-        load_target_source
+        owner.preload_association_lazily(reflection.name)
+        old_load_target
       end
     end
   end

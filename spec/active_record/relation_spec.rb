@@ -4,10 +4,21 @@ require "spec_helper"
 
 describe ActiveRecord::Relation do
   describe "#lazy_preload" do
-    subject { User.lazy_preload(:posts) }
+    it "responds to lazy_preload" do
+      expect(User.lazy_preload(:posts)).to respond_to(:lazy_preload)
+    end
 
     it "stores lazy_preload_values" do
-      expect(subject.lazy_preload_values).to eq([:posts])
+      expect(User.lazy_preload(posts: :user).lazy_preload_values).to eq([posts: :user])
+    end
+
+    it "supports chain calls" do
+      relation = Comment.lazy_preload(:post).lazy_preload(:user)
+      expect(relation.lazy_preload_values).to eq(%i[post user])
+    end
+
+    it "raises exception on empty arguments" do
+      expect { User.lazy_preload }.to raise_exception(ArgumentError)
     end
   end
 
@@ -25,9 +36,7 @@ describe ActiveRecord::Relation do
     end
 
     it "loads posts for all users lazily" do
-      expect do
-        subject.each { |u| u.posts.map(&:id) }
-      end.to make_database_queries(count: 2)
+      expect { subject.each { |u| u.posts.map(&:id) } }.to make_database_queries(count: 2)
     end
   end
 
@@ -50,9 +59,11 @@ describe ActiveRecord::Relation do
     end
 
     it "loads users for all comments lazily" do
-      expect do
-        subject.each { |c| c.user.id }
-      end.to make_database_queries(count: 2)
+      expect { subject.each { |c| c.user.id } }.to make_database_queries(count: 2)
+    end
+
+    it "does not load posts lazily" do
+      expect { subject.each { |c| c.user.posts.map(&:id) } }.to make_database_queries(count: 4)
     end
   end
 end

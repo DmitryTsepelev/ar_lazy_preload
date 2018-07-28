@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-require "ar_lazy_preload/association"
-require "ar_lazy_preload/custom_loader"
-require "ar_lazy_preload/lazy_preload"
 require "ar_lazy_preload/base"
+require "ar_lazy_preload/relation"
+require "ar_lazy_preload/association"
 
 module ArLazyPreload
   ActiveRecord::Base.include(ArLazyPreload::Base)
 
-  ActiveRecord::Relation.include(ArLazyPreload::LazyPreload)
-  ActiveRecord::Relation.include(ArLazyPreload::CustomLoader)
+  ActiveRecord::Relation.include(ArLazyPreload::Relation)
 
   [
     ActiveRecord::Associations::CollectionAssociation,
