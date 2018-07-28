@@ -1,20 +1,22 @@
 # frozen_string_literal: true
 
-class Context
-  attr_reader :records, :associations
+module ArLazyPreload
+  class Context
+    attr_reader :records, :associations
 
-  def initialize(records, associations)
-    @records = records
-    @associations = associations
-  end
+    def initialize(records, associations)
+      @records = records
+      @associations = associations
+    end
 
-  def preload_association(association)
-    preloader.preload(records, association) if associations.include?(association)
-  end
+    def preload_association(association)
+      preloader.preload(records, association) if associations.include?(association)
+    end
 
-  private
+    private
 
-  def preloader
-    @preloader ||= ActiveRecord::Associations::Preloader.new
+    def preloader
+      @preloader ||= ActiveRecord::Associations::Preloader.new
+    end
   end
 end

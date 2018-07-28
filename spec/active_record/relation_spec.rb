@@ -2,7 +2,18 @@
 
 require "spec_helper"
 
-describe ActiveRecord::Relation do
+describe ArLazyPreload::Relation do
+  before(:all) do
+    user1 = User.create
+    user2 = User.create
+
+    post1 = user1.posts.create
+    user1.posts.create
+
+    user1.comments.create(post: post1)
+    user2.comments.create(post: post1)
+  end
+
   describe "#lazy_preload" do
     it "responds to lazy_preload" do
       expect(User.lazy_preload(:posts)).to respond_to(:lazy_preload)
@@ -25,12 +36,6 @@ describe ActiveRecord::Relation do
   describe "has_many" do
     subject { User.lazy_preload(:posts) }
 
-    before(:all) do
-      user = User.create
-      user.posts.create
-      user.posts.create
-    end
-
     it "does not load posts initially" do
       expect { subject.inspect }.to make_database_queries(count: 1)
     end
@@ -42,17 +47,6 @@ describe ActiveRecord::Relation do
 
   describe "belongs_to" do
     subject { Comment.lazy_preload(:user) }
-
-    before(:all) do
-      user1 = User.create
-      user2 = User.create
-
-      post1 = user1.posts.create
-      user1.posts.create
-
-      user1.comments.create(post: post1)
-      user2.comments.create(post: post1)
-    end
 
     it "does not load users initially" do
       expect { subject.inspect }.to make_database_queries(count: 1)

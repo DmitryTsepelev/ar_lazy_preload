@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-describe ActiveRecord::Base do
+describe ArLazyPreload::Base do
   describe "#lazy_preload" do
     subject { ActiveRecord::Base }
 

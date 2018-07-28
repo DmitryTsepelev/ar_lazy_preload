@@ -6,6 +6,7 @@ module ArLazyPreload
   module Relation
     extend ActiveSupport::Concern
 
+    # rubocop:disable Metrics/BlockLength
     included do
       alias_method :old_load, :load
 
@@ -17,9 +18,13 @@ module ArLazyPreload
 
       def lazy_preload(*args)
         check_if_method_has_arguments!(:lazy_preload, args)
+        spawn.lazy_preload!(*args)
+      end
+
+      def lazy_preload!(*args)
         args.reject!(&:blank?)
         args.flatten!
-        self.lazy_preload_values += args
+        self.lazy_preload_values |= args
         self
       end
 
@@ -34,9 +39,10 @@ module ArLazyPreload
       end
 
       def setup_lazy_preload_context
-        context = Context.new(@records, lazy_preload_values)
+        context = ArLazyPreload::Context.new(@records, lazy_preload_values)
         @records.each { |record| record.lazy_preload_context = context }
       end
     end
+    # rubocop:enable Metrics/BlockLength
   end
 end

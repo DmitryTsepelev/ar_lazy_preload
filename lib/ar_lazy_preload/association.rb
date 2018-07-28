@@ -8,7 +8,8 @@ module ArLazyPreload
       alias_method :old_load_target, :load_target
 
       def load_target
-        owner.preload_association_lazily(reflection.name)
+        association = reflection.name
+        owner.preload_association_lazily(association)
         old_load_target
       end
     end
