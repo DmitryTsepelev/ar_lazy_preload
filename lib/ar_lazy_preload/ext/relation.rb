@@ -7,7 +7,7 @@ module ArLazyPreload
     def load
       need_context = !loaded?
       old_load_result = super
-      setup_lazy_preload_context if need_context && lazy_preload_values.any?
+      setup_lazy_preload_context if need_context
       old_load_result
     end
 
@@ -34,8 +34,8 @@ module ArLazyPreload
     end
 
     def setup_lazy_preload_context
-      context = ArLazyPreload::Context.new(@records, lazy_preload_values)
-      @records.each { |record| record.lazy_preload_context = context }
+      return if lazy_preload_values.blank? || @records.blank?
+      ArLazyPreload::Context.new(@records, lazy_preload_values)
     end
   end
 end

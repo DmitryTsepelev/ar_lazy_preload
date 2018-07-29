@@ -17,4 +17,8 @@ ActiveRecord::Schema.define do
 
     t.timestamps
   end
+
+  create_table :accounts do |t|
+    t.references :user, foreign_key: true
+  end
 end

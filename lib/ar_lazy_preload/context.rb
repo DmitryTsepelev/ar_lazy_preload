@@ -1,51 +1,54 @@
 # frozen_string_literal: true
 
+require "ar_lazy_preload/child_associations_builder"
+
 module ArLazyPreload
   class Context
-    attr_reader :records, :preloadable_associations
+    attr_reader :records, :association_values
 
-    def initialize(records, preloadable_associations)
+    def initialize(records, association_values)
       @records = records
-      @preloadable_associations = preloadable_associations
+      @association_values = association_values
+
+      records.each { |record| record.lazy_preload_context = self }
     end
 
     def preload_association(association)
-      return unless association_needs_preload(association)
-
+      return unless association_needs_preload?(association)
       preloader.preload(records, association)
 
-      preloaded_records = records.map { |record| record.send(association) }
-
-      context = build_child_context(association, preloaded_records)
-      preloaded_records.each { |record| record.lazy_preload_context = context } if context.present?
+      child_associations = child_associations_builder.build(association)
+      setup_child_preloading(association, child_associations) if child_associations.present?
     end
 
     private
+
+    def association_needs_preload?(association)
+      association_values.any? do |value|
+        if value.is_a?(Symbol)
+          value == association
+        elsif value.is_a?(Hash)
+          value.key?(association)
+        end
+      end
+    end
+
+    def setup_child_preloading(association, child_associations)
+      reflection = records.first.class.reflect_on_association(association)
+      # TODO: HasAndBelongsToManyReflection ?
+      # TODO: HasOneReflection ?
+      associated_records = records.map { |record| record.send(association) }
+      associated_records = associated_records.map(&:target).flatten if reflection.collection?
+
+      Context.new(associated_records, child_associations)
+    end
 
     def preloader
       @preloader ||= ActiveRecord::Associations::Preloader.new
     end
 
-    def association_needs_preload(association)
-      preloadable_associations.include?(association)
-
-      preloadable_associations.any? do |preloadable_association|
-        if preloadable_association.is_a?(Symbol)
-          preloadable_association == association
-        elsif preloadable_association.is_a?(Hash)
-          preloadable_association.key?(association)
-        end
-      end
-    end
-
-    def build_child_context(association, preloaded_records)
-      lazy_preload_values =
-        preloadable_associations.each_with_object([]) do |preloadable_association, result|
-          result << preloadable_association[association] if preloadable_association.is_a?(Hash)
-        end
-      return if lazy_preload_values.blank?
-
-      ArLazyPreload::Context.new(preloaded_records, lazy_preload_values)
+    def child_associations_builder
+      @child_associations_builder ||= ChildAssociationsBuilder.new(association_values)
     end
   end
 end

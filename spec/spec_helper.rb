@@ -13,6 +13,9 @@ RSpec.configure do |config|
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
   end
+
+  config.formatter = :documentation
+  config.color = true
 end
 
 ActiveRecord::Base.establish_connection(
