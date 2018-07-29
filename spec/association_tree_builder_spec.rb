@@ -2,14 +2,14 @@
 
 require "spec_helper"
 
-describe ArLazyPreload::ChildAssociationsBuilder do
+describe ArLazyPreload::AssociationTreeBuilder do
   it "supports symbols" do
     subject = described_class.new([:user])
-    expect(subject.build(:user)).to eq([])
+    expect(subject.build_subtree_for(:user)).to eq([])
   end
 
   it "supports hashes" do
     subject = described_class.new([user: :comments])
-    expect(subject.build(:user)).to eq([:comments])
+    expect(subject.build_subtree_for(:user)).to eq([:comments])
   end
 end

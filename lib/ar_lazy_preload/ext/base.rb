@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ArLazyPreload
+  # ActiveRecord::Base patch with lazy preloading support
   module Base
     module Delegation
       delegate :lazy_preload, to: :all

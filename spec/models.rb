@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   has_many :posts
   has_many :comments
   has_one :account
+  has_one :account_history, through: :account
   has_many :comments_on_posts, through: :posts, source: :comments
 end
 
@@ -19,4 +20,9 @@ end
 
 class Account < ActiveRecord::Base
   belongs_to :user
+  has_one :account_history
+end
+
+class AccountHistory < ActiveRecord::Base
+  belongs_to :account
 end

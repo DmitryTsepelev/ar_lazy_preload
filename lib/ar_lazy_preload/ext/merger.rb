@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module ArLazyPreload
+  # ActiveRecord::Relation::Merger patch implementing merge functionality
+  # for lazy preloadable relations
   module Merger
     def merge
       result = super

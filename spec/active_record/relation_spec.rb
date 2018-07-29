@@ -4,14 +4,15 @@ require "spec_helper"
 
 describe ArLazyPreload::Relation do
   before(:all) do
-    user1 = User.create(account: Account.create)
-    user2 = User.create(account: Account.create)
+    user1 = User.create(account: Account.create(account_history: AccountHistory.create))
+    user2 = User.create(account: Account.create(account_history: AccountHistory.create))
 
     post1 = user1.posts.create
     user1.posts.create
 
     user1.comments.create(post: post1)
     user2.comments.create(post: post1)
+    post1.comments.create
   end
 
   describe "lazy_preload" do
@@ -31,7 +32,9 @@ describe ArLazyPreload::Relation do
     it "raises exception on empty arguments" do
       expect { User.lazy_preload }.to raise_exception(ArgumentError)
     end
+  end
 
+  describe "context building" do
     it "not recreates context on second load call" do
       relation = Comment.lazy_preload(:post).lazy_preload(:user)
       context = relation.load.first.lazy_preload_context
@@ -51,85 +54,126 @@ describe ArLazyPreload::Relation do
     end
   end
 
-  describe "has_many" do
-    subject { User.lazy_preload(:posts) }
+  def expect_requests_made(count)
+    expect { yield if block_given? }.to make_database_queries(count: count)
+  end
 
-    # SELECT  "users".* FROM "users" LIMIT ?
-    it "does not load posts initially" do
-      expect { subject.inspect }.to make_database_queries(count: 1)
-    end
-
-    # SELECT "users".* FROM "users"
-    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
-    it "loads posts for all users lazily" do
-      expect { subject.map { |u| u.posts.map(&:id) } }.to make_database_queries(count: 2)
+  RSpec.shared_examples "check initial loading" do
+    it "does not load association before it's called" do
+      expect_requests_made(1) { subject.inspect }
     end
   end
 
   describe "belongs_to" do
+    include_examples "check initial loading"
+
     subject { Comment.lazy_preload(:user) }
 
-    # SELECT  "comments".* FROM "comments" LIMIT ?
-    it "does not load users initially" do
-      expect { subject.inspect }.to make_database_queries(count: 1)
-    end
-
     # SELECT "comments".* FROM "comments"
     # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
-    it "loads users for all comments lazily" do
-      expect { subject.map { |c| c.user.id } }.to make_database_queries(count: 2)
+    it "loads lazy_preloaded association" do
+      expect_requests_made(2) { subject.map { |comment| comment.user&.id } }
     end
 
     # SELECT "comments".* FROM "comments"
     # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
     # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = ?
     # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = ?
-    it "does not load posts lazily" do
-      expect { subject.map { |c| c.user.posts.map(&:id) } }.to make_database_queries(count: 4)
+    it "does not load association which was not lazily preloaded" do
+      expect_requests_made(4) do
+        subject.map do |comment|
+          comment.user.posts.map(&:id) if comment.user.present?
+        end
+      end
     end
   end
 
-  describe "belongs_to + has_many" do
-    subject { Comment.lazy_preload(user: { posts: :comments }) }
+  describe "has_many" do
+    include_examples "check initial loading"
 
-    # SELECT "comments".* FROM "comments"
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
-    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
-    it "loads posts lazily" do
-      expect { subject.map { |c| c.user.posts.map(&:id) } }.to make_database_queries(count: 3)
-    end
-
-    # SELECT "comments".* FROM "comments"
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
-    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
-    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (?, ?)
-    it "loads posts with comments lazily" do
-      expect do
-        subject.map { |c| c.user.posts.map { |p| p.comments.map(&:id) } }
-      end.to make_database_queries(count: 4)
-    end
-  end
-
-  describe "has_one" do
-    subject { User.lazy_preload(:account) }
+    subject { User.lazy_preload(:posts) }
 
     # SELECT "users".* FROM "users"
-    # SELECT "accounts".* FROM "accounts" WHERE "accounts"."user_id" IN (?, ?)
-    it "loads accounts lazily" do
-      expect { subject.map { |u| u.account.id } }.to make_database_queries(count: 2)
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
+    it "loads lazy_preloaded association" do
+      expect_requests_made(2) { subject.map { |u| u.posts.map(&:id) } }
     end
   end
 
   describe "has_many through" do
+    include_examples "check initial loading"
+
     subject { User.lazy_preload(:comments_on_posts) }
 
     # SELECT "users".* FROM "users"
     # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
     # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (?, ?)
-    it "loads accounts lazily" do
-      expect do
-        subject.map { |u| u.comments_on_posts.map(&:id) }
-      end.to make_database_queries(count: 3)
+    it "loads lazy_preloaded association" do
+      expect_requests_made(3) { subject.map { |u| u.comments_on_posts.map(&:id) } }
     end
+  end
+
+  describe "has_one" do
+    include_examples "check initial loading"
+
+    subject { User.lazy_preload(:account) }
+
+    # SELECT "users".* FROM "users"
+    # SELECT "accounts".* FROM "accounts" WHERE "accounts"."user_id" IN (?, ?)
+    it "loads lazy_preloaded association" do
+      expect_requests_made(2) { subject.map { |u| u.account.id } }
+    end
+  end
+
+  describe "has_one through" do
+    include_examples "check initial loading"
+
+    subject { User.lazy_preload(:account_history) }
+
+    # SELECT "users".* FROM "users"
+    # SELECT "accounts".* FROM "accounts" WHERE "accounts"."user_id" IN (?, ?)
+    # SELECT "account_histories".*
+    #   FROM "account_histories"
+    #   WHERE "account_histories"."account_id" IN (?, ?)
+    it "loads lazy_preloaded association" do
+      expect_requests_made(3) do
+        subject.map { |user| user.account_history.id }
+      end
+    end
+  end
+
+  describe "has_and_belongs_to_many" do
+    # TODO
+  end
+
+  describe "belongs_to + has_many" do
+    include_examples "check initial loading"
+
+    subject { Comment.lazy_preload(user: { posts: :comments }) }
+
+    # SELECT "comments".* FROM "comments"
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
+    it "loads lazy_preloaded association" do
+      expect_requests_made(3) do
+        subject.map { |comment| comment.user.posts.map(&:id) if comment.user.present? }
+      end
+    end
+
+    # SELECT "comments".* FROM "comments"
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (?, ?)
+    it "loads associtions lazily" do
+      expect_requests_made(4) do
+        subject.map do |comment|
+          comment.user.posts.map { |p| p.comments.map(&:id) } if comment.user.present?
+        end
+      end
+    end
+  end
+
+  describe "polymorphic" do
+    # TODO
   end
 end

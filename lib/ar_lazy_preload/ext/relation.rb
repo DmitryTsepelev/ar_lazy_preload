@@ -3,6 +3,7 @@
 require "ar_lazy_preload/context"
 
 module ArLazyPreload
+  # ActiveRecord::Relation patch with lazy preloading support
   module Relation
     def load
       need_context = !loaded?
@@ -35,7 +36,12 @@ module ArLazyPreload
 
     def setup_lazy_preload_context
       return if lazy_preload_values.blank? || @records.blank?
-      ArLazyPreload::Context.new(@records, lazy_preload_values)
+
+      ArLazyPreload::Context.new(
+        model: model,
+        records: @records,
+        association_tree: lazy_preload_values
+      )
     end
   end
 end
