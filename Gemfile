@@ -11,5 +11,4 @@ if File.exist?(local_gemfile)
   eval(File.read(local_gemfile)) # rubocop:disable Security/Eval
 else
   gem "activerecord", "~> 5.0"
-  gem "activesupport", "~> 5.0"
 end

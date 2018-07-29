@@ -145,7 +145,6 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord (~> 5.0)
-  activesupport (~> 5.0)
   ar_lazy_preload!
   coveralls
   db-query-matchers
