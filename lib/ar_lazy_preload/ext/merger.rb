@@ -4,6 +4,7 @@ module ArLazyPreload
   # ActiveRecord::Relation::Merger patch implementing merge functionality
   # for lazy preloadable relations
   module Merger
+    # Enhanced #merge implements merging lazy_preload_values
     def merge
       result = super
 
@@ -27,7 +28,8 @@ module ArLazyPreload
     def reflect_and_merge_lazy_preloads
       reflection = relation.klass.reflect_on_all_associations.find do |r|
         r.class_name == other.klass.name
-      end || return
+      end
+      return unless reflection
 
       relation.lazy_preload!(reflection.name => other.lazy_preload_values)
     end

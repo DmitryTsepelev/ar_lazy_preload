@@ -4,22 +4,25 @@ require "spec_helper"
 
 describe ArLazyPreload::Relation do
   before(:all) do
-    user1 = User.create(account: Account.create(account_history: AccountHistory.create))
-    user2 = User.create(account: Account.create(account_history: AccountHistory.create))
+    user1 = User.create
+    account_history1 = AccountHistory.create
+    Account.create(account_history: account_history1, user: user1)
+
+    user2 = User.create
+    account_history2 = AccountHistory.create
+    Account.create(account_history: account_history2, user: user2)
 
     post1 = user1.posts.create
-    post1.votes.create(user: user1)
     post2 = user1.posts.create
-    post2.votes.create(user: user2)
+
+    user2.vote_for(post1)
+    user1.vote_for(post2)
 
     comment1 = user1.comments.create(post: post1, mentioned_users: [user2])
-    comment1.votes.create(user: user1)
-
     comment2 = user2.comments.create(post: post1, mentioned_users: [user1])
-    comment2.votes.create(user: user2)
 
-    comment3 = post1.comments.create
-    comment3.votes.create(user: user1)
+    user1.vote_for(comment2)
+    user2.vote_for(comment1)
   end
 
   describe "lazy_preload" do
@@ -61,37 +64,15 @@ describe ArLazyPreload::Relation do
     end
   end
 
-  def expect_requests_made(count)
-    expect { yield if block_given? }.to make_database_queries(count: count)
-  end
-
-  RSpec.shared_examples "check initial loading" do
-    it "does not load association before it's called" do
-      expect_requests_made(1) { subject.inspect }
-    end
-  end
-
   describe "belongs_to" do
     include_examples "check initial loading"
 
     subject { Comment.lazy_preload(:user) }
 
     # SELECT "comments".* FROM "comments"
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
     it "loads lazy_preloaded association" do
-      expect_requests_made(2) { subject.map { |comment| comment.user&.id } }
-    end
-
-    # SELECT "comments".* FROM "comments"
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
-    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = ?
-    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = ?
-    it "does not load association which was not lazily preloaded" do
-      expect_requests_made(4) do
-        subject.map do |comment|
-          comment.user.posts.map(&:id) if comment.user.present?
-        end
-      end
+      expect { subject.each { |comment| comment.user&.id } }.to make_database_queries(count: 2)
     end
   end
 
@@ -101,9 +82,9 @@ describe ArLazyPreload::Relation do
     subject { User.lazy_preload(:posts) }
 
     # SELECT "users".* FROM "users"
-    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
     it "loads lazy_preloaded association" do
-      expect_requests_made(2) { subject.map { |u| u.posts.map(&:id) } }
+      expect { subject.each { |u| u.posts.map(&:id) } }.to make_database_queries(count: 2)
     end
   end
 
@@ -113,10 +94,12 @@ describe ArLazyPreload::Relation do
     subject { User.lazy_preload(:comments_on_posts) }
 
     # SELECT "users".* FROM "users"
-    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
-    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (?, ?)
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
     it "loads lazy_preloaded association" do
-      expect_requests_made(3) { subject.map { |u| u.comments_on_posts.map(&:id) } }
+      expect do
+        subject.each { |u| u.comments_on_posts.map(&:id) }
+      end.to make_database_queries(count: 3)
     end
   end
 
@@ -126,9 +109,9 @@ describe ArLazyPreload::Relation do
     subject { User.lazy_preload(:account) }
 
     # SELECT "users".* FROM "users"
-    # SELECT "accounts".* FROM "accounts" WHERE "accounts"."user_id" IN (?, ?)
+    # SELECT "accounts".* FROM "accounts" WHERE "accounts"."user_id" IN (...)
     it "loads lazy_preloaded association" do
-      expect_requests_made(2) { subject.map { |u| u.account.id } }
+      expect { subject.each { |u| u.account.id } }.to make_database_queries(count: 2)
     end
   end
 
@@ -138,14 +121,12 @@ describe ArLazyPreload::Relation do
     subject { User.lazy_preload(:account_history) }
 
     # SELECT "users".* FROM "users"
-    # SELECT "accounts".* FROM "accounts" WHERE "accounts"."user_id" IN (?, ?)
+    # SELECT "accounts".* FROM "accounts" WHERE "accounts"."user_id" IN (...)
     # SELECT "account_histories".*
     #   FROM "account_histories"
-    #   WHERE "account_histories"."account_id" IN (?, ?)
+    #   WHERE "account_histories"."account_id" IN (...)
     it "loads lazy_preloaded association" do
-      expect_requests_made(3) do
-        subject.map { |user| user.account_history.id }
-      end
+      expect { subject.each { |user| user.account_history.id } }.to make_database_queries(count: 3)
     end
   end
 
@@ -155,22 +136,22 @@ describe ArLazyPreload::Relation do
     subject { Comment.lazy_preload(mentioned_users: :posts) }
 
     # SELECT "comments".* FROM "comments"
-    # SELECT "user_mentions".* FROM "user_mentions" WHERE "user_mentions"."comment_id" IN (?, ?, ?)
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
+    # SELECT "user_mentions".* FROM "user_mentions" WHERE "user_mentions"."comment_id" IN (...)
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
     it "loads lazy_preloaded association" do
-      expect_requests_made(3) do
-        subject.map { |comment| comment.mentioned_users.map(&:id) }
-      end
+      expect do
+        subject.each { |comment| comment.mentioned_users.map(&:id) }
+      end.to make_database_queries(count: 3)
     end
 
     # SELECT "comments".* FROM "comments"
-    # SELECT "user_mentions".* FROM "user_mentions" WHERE "user_mentions"."comment_id" IN (?, ?, ?)
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
-    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
+    # SELECT "user_mentions".* FROM "user_mentions" WHERE "user_mentions"."comment_id" IN (...)
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
     it "loads embedded lazy_preloaded association" do
-      expect_requests_made(4) do
-        subject.map { |comment| comment.mentioned_users.map { |u| u.posts.map(&:id) } }
-      end
+      expect do
+        subject.each { |comment| comment.mentioned_users.map { |u| u.posts.map(&:id) } }
+      end.to make_database_queries(count: 4)
     end
   end
 
@@ -180,24 +161,24 @@ describe ArLazyPreload::Relation do
     subject { Comment.lazy_preload(user: { posts: :comments }) }
 
     # SELECT "comments".* FROM "comments"
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
-    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
     it "loads lazy_preloaded association" do
-      expect_requests_made(3) do
-        subject.map { |comment| comment.user.posts.map(&:id) if comment.user.present? }
-      end
+      expect do
+        subject.each { |comment| comment.user.posts.map(&:id) if comment.user.present? }
+      end.to make_database_queries(count: 3)
     end
 
     # SELECT "comments".* FROM "comments"
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
-    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
-    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (?, ?)
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
     it "loads embedded lazy_preloaded association" do
-      expect_requests_made(4) do
+      expect do
         subject.map do |comment|
           comment.user.posts.map { |p| p.comments.map(&:id) } if comment.user.present?
         end
-      end
+      end.to make_database_queries(count: 4)
     end
   end
 
@@ -207,10 +188,14 @@ describe ArLazyPreload::Relation do
     subject { Vote.lazy_preload(:voteable) }
 
     # SELECT "votes".* FROM "votes"
-    # SELECT "posts".* FROM "posts" WHERE "posts"."id" IN (?, ?)
-    # SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (?, ?, ?)
+    # SELECT "posts".* FROM "posts" WHERE "posts"."id" IN (...)
+    # SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (...)
     it "loads lazy_preloaded association" do
-      expect_requests_made(3) { subject.map { |vote| vote.voteable.id } }
+      expect { subject.map { |vote| vote.voteable.id } }.to make_database_queries(count: 3)
     end
+  end
+
+  describe "self_join" do
+    it "loads lazy_preloaded association", pending: true
   end
 end

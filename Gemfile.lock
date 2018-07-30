@@ -41,6 +41,7 @@ GEM
       term-ansicolor
       thor
     crass (1.0.4)
+    database_cleaner (1.7.0)
     db-query-matchers (0.9.0)
       activesupport (>= 4.0, <= 6.0)
       rspec (~> 3.0)
@@ -147,6 +148,7 @@ DEPENDENCIES
   activerecord (~> 5.0)
   ar_lazy_preload!
   coveralls
+  database_cleaner
   db-query-matchers
   rspec
   rspec-rails

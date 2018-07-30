@@ -7,10 +7,13 @@ module ArLazyPreload
   # which have been loaded by the same instance of ActiveRecord::Relation. It also contains a tree
   # of associations, which were requested to be loaded lazily.
   # Calling #preload_association method will cause loading of ALL associated objects for EACH
-  # ecord when requested association is found in the association tree
+  # ecord when requested association is found in the association tree.
   class Context
     attr_reader :model, :records, :association_tree
 
+    # :model - ActiveRecord class which records belong to
+    # :records - array of ActiveRecord instances
+    # :association_tree - list of symbols or hashes representing a tree of preloadable associations
     def initialize(model:, records:, association_tree:)
       @model = model
       @records = records.compact
@@ -19,6 +22,8 @@ module ArLazyPreload
       @records.each { |record| record.lazy_preload_context = self }
     end
 
+    # This method checks if the association is present in the association_tree and preloads for all
+    # objects in the context it if needed.
     def preload_association(association_name)
       return unless association_needs_preload?(association_name)
 

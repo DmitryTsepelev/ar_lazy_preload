@@ -17,6 +17,8 @@ module ArLazyPreload
       @association_name = association_name
     end
 
+    # Takes all the associated records for the records, attached to the :parent_context and creates
+    # a preloading context for them
     def perform
       return if child_association_tree.blank? || associated_records.blank?
 
@@ -30,7 +32,7 @@ module ArLazyPreload
     private
 
     def child_association_tree
-      @child_association_tree ||= association_tree_builder.build_subtree_for(association_name)
+      @child_association_tree ||= association_tree_builder.subtree_for(association_name)
     end
 
     def association_tree_builder

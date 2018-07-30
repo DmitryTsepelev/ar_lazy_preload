@@ -5,6 +5,7 @@ Coveralls.wear!
 
 require "active_record"
 require "db_query_matchers"
+require "database_cleaner"
 require "ar_lazy_preload"
 
 RSpec.configure do |config|
@@ -16,6 +17,21 @@ RSpec.configure do |config|
 
   config.formatter = :documentation
   config.color = true
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning { example.run }
+  end
+end
+
+RSpec.shared_examples "check initial loading" do
+  it "does not load association before it's called" do
+    expect { subject.inspect }.to make_database_queries(count: 1)
+  end
 end
 
 ActiveRecord::Base.establish_connection(

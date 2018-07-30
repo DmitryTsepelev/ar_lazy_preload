@@ -7,6 +7,10 @@ class User < ActiveRecord::Base
   has_many :posts
   has_many :comments
   has_many :comments_on_posts, through: :posts, source: :comments
+
+  def vote_for(voteable)
+    voteable.votes.create(user: self)
+  end
 end
 
 class Post < ActiveRecord::Base
