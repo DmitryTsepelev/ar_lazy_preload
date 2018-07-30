@@ -50,6 +50,8 @@ GEM
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
     erubi (1.7.1)
+    factory_bot (4.10.0)
+      activesupport (>= 3.0.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     i18n (1.0.1)
@@ -150,6 +152,7 @@ DEPENDENCIES
   coveralls
   database_cleaner
   db-query-matchers
+  factory_bot
   rspec
   rspec-rails
   rubocop

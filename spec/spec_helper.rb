@@ -6,9 +6,12 @@ Coveralls.wear!
 require "active_record"
 require "db_query_matchers"
 require "database_cleaner"
+require "factory_bot"
 require "ar_lazy_preload"
 
 RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
+
   config.order = :random
 
   config.mock_with :rspec do |mocks|
@@ -41,5 +44,6 @@ ActiveRecord::Base.establish_connection(
 
 load File.dirname(__FILE__) + "/schema.rb"
 require File.dirname(__FILE__) + "/models.rb"
+require File.dirname(__FILE__) + "/factories.rb"
 
 ActiveRecord::Base.logger = Logger.new(STDOUT) if ENV["SQL"]

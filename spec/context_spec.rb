@@ -3,18 +3,19 @@
 require "spec_helper"
 
 describe ArLazyPreload::Context do
-  let(:user_without_posts) { User.create }
+  let(:user_without_posts) { create(:user) }
   let(:user_with_post) do
-    user = User.create
-    Post.create(user: user)
+    user = create(:user)
+    post = create(:post, user: user)
+    create(:comment, post: post, user: user)
     user
   end
 
   subject! do
-    ArLazyPreload::Context.new(
+    described_class.new(
       model: User,
       records: [user_with_post, user_without_posts, nil],
-      association_tree: [:comments]
+      association_tree: [comments: :post]
     )
   end
 

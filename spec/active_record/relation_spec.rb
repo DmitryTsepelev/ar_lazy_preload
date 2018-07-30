@@ -4,25 +4,18 @@ require "spec_helper"
 
 describe ArLazyPreload::Relation do
   before(:all) do
-    user1 = User.create
-    account_history1 = AccountHistory.create
-    Account.create(account_history: account_history1, user: user1)
+    user1 = create(:user, :with_account)
+    user2 = create(:user, :with_account)
 
-    user2 = User.create
-    account_history2 = AccountHistory.create
-    Account.create(account_history: account_history2, user: user2)
-
-    post1 = user1.posts.create
-    post2 = user1.posts.create
-
+    post1 = create(:post, user: user1)
     user2.vote_for(post1)
-    user1.vote_for(post2)
-
-    comment1 = user1.comments.create(post: post1, mentioned_users: [user2])
-    comment2 = user2.comments.create(post: post1, mentioned_users: [user1])
-
-    user1.vote_for(comment2)
+    comment1 = create(:comment, user: user1, post: post1, mentioned_users: [user2])
     user2.vote_for(comment1)
+
+    post2 = create(:post, user: user1)
+    user1.vote_for(post2)
+    comment2 = create(:comment, user: user2, post: post1, mentioned_users: [user1])
+    user1.vote_for(comment2)
   end
 
   describe "lazy_preload" do
