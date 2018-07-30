@@ -8,11 +8,18 @@ describe ArLazyPreload::Relation do
     user2 = User.create(account: Account.create(account_history: AccountHistory.create))
 
     post1 = user1.posts.create
-    user1.posts.create
+    post1.votes.create(user: user1)
+    post2 = user1.posts.create
+    post2.votes.create(user: user2)
 
-    user1.comments.create(post: post1)
-    user2.comments.create(post: post1)
-    post1.comments.create
+    comment1 = user1.comments.create(post: post1, mentioned_users: [user2])
+    comment1.votes.create(user: user1)
+
+    comment2 = user2.comments.create(post: post1, mentioned_users: [user1])
+    comment2.votes.create(user: user2)
+
+    comment3 = post1.comments.create
+    comment3.votes.create(user: user1)
   end
 
   describe "lazy_preload" do
@@ -143,7 +150,28 @@ describe ArLazyPreload::Relation do
   end
 
   describe "has_and_belongs_to_many" do
-    # TODO
+    include_examples "check initial loading"
+
+    subject { Comment.lazy_preload(mentioned_users: :posts) }
+
+    # SELECT "comments".* FROM "comments"
+    # SELECT "user_mentions".* FROM "user_mentions" WHERE "user_mentions"."comment_id" IN (?, ?, ?)
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
+    it "loads lazy_preloaded association" do
+      expect_requests_made(3) do
+        subject.map { |comment| comment.mentioned_users.map(&:id) }
+      end
+    end
+
+    # SELECT "comments".* FROM "comments"
+    # SELECT "user_mentions".* FROM "user_mentions" WHERE "user_mentions"."comment_id" IN (?, ?, ?)
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
+    it "loads embedded lazy_preloaded association" do
+      expect_requests_made(4) do
+        subject.map { |comment| comment.mentioned_users.map { |u| u.posts.map(&:id) } }
+      end
+    end
   end
 
   describe "belongs_to + has_many" do
@@ -164,7 +192,7 @@ describe ArLazyPreload::Relation do
     # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
     # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (?, ?)
     # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (?, ?)
-    it "loads associtions lazily" do
+    it "loads embedded lazy_preloaded association" do
       expect_requests_made(4) do
         subject.map do |comment|
           comment.user.posts.map { |p| p.comments.map(&:id) } if comment.user.present?
@@ -174,6 +202,15 @@ describe ArLazyPreload::Relation do
   end
 
   describe "polymorphic" do
-    # TODO
+    include_examples "check initial loading"
+
+    subject { Vote.lazy_preload(:voteable) }
+
+    # SELECT "votes".* FROM "votes"
+    # SELECT "posts".* FROM "posts" WHERE "posts"."id" IN (?, ?)
+    # SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (?, ?, ?)
+    it "loads lazy_preloaded association" do
+      expect_requests_made(3) { subject.map { |vote| vote.voteable.id } }
+    end
   end
 end
