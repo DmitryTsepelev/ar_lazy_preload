@@ -17,8 +17,8 @@ module ArLazyPreload
       @lazy_preload_context = value
     end
 
-    def preload_association_lazily(association)
-      lazy_preload_context.preload_association(association) if lazy_preload_context.present?
+    def preload_association_for_context(association_name)
+      lazy_preload_context.preload_association(association_name) if lazy_preload_context.present?
     end
   end
 end

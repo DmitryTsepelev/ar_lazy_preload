@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "ar_lazy_preload/association_tree_builder"
+require "ar_lazy_preload/associated_context_builder"
 
 module ArLazyPreload
   # This class is responsible for holding a connection between a list of ActiveRecord::Base objects
@@ -21,10 +21,13 @@ module ArLazyPreload
 
     def preload_association(association_name)
       return unless association_needs_preload?(association_name)
+
       preloader.preload(records, association_name)
 
-      child_associations = child_associations_builder.build_subtree_for(association_name)
-      setup_child_preloading(association_name, child_associations) if child_associations.present?
+      AssociatedContextBuilder.new(
+        parent_context: self,
+        association_name: association_name
+      ).perform
     end
 
     private
@@ -39,34 +42,8 @@ module ArLazyPreload
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
-    def setup_child_preloading(association_name, child_associations)
-      # TODO: consider moving to the separate class
-      reflection = model.reflect_on_association(association_name)
-
-      associated_records =
-        if reflection.collection?
-          records.map { |record| record.send(association_name).target }.flatten
-        else
-          records.map { |record| record.send(association_name) }
-        end
-
-      return if associated_records.blank?
-
-      Context.new(
-        model: reflection.klass,
-        records: associated_records,
-        association_tree: child_associations
-      )
-    end
-    # rubocop:enable Metrics/MethodLength
-
     def preloader
       @preloader ||= ActiveRecord::Associations::Preloader.new
-    end
-
-    def child_associations_builder
-      @child_associations_builder ||= AssociationTreeBuilder.new(association_tree)
     end
   end
 end
