@@ -48,9 +48,7 @@ module ArLazyPreload
 
     private
 
-    def lazy_preload_values=(values)
-      @lazy_preload_values = values
-    end
+    attr_writer :lazy_preload_values
 
     def setup_lazy_preload_context
       return if lazy_preload_values.blank? || @records.blank?

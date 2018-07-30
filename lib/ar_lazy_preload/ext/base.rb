@@ -1,17 +1,10 @@
 # frozen_string_literal: true
 
-require "forwardable"
-
 module ArLazyPreload
   # ActiveRecord::Base patch with lazy preloading support
   module Base
-    module ClassMethods
-      extend Forwardable
-      def_delegators :all, :lazy_preload
-    end
-
     def self.included(base)
-      base.extend(ClassMethods)
+      base.class.delegate :lazy_preload, to: :all
     end
 
     attr_accessor :lazy_preload_context

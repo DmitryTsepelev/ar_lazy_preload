@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "forwardable"
 require "ar_lazy_preload/association_tree_builder"
 
 module ArLazyPreload
@@ -8,14 +7,14 @@ module ArLazyPreload
   # belonging to the same context and association name it will create and attach a new context to
   # the associated records based on the parent association tree.
   class AssociatedContextBuilder
-    extend Forwardable
-
     attr_reader :parent_context, :association_name
 
     def initialize(parent_context:, association_name:)
       @parent_context = parent_context
       @association_name = association_name
     end
+
+    delegate :records, :association_tree, :model, to: :parent_context
 
     # Takes all the associated records for the records, attached to the :parent_context and creates
     # a preloading context for them
@@ -55,7 +54,5 @@ module ArLazyPreload
     def record_associations
       @record_associations ||= records.map { |record| record.send(association_name) }
     end
-
-    def_delegators :parent_context, :records, :association_tree, :model
   end
 end
