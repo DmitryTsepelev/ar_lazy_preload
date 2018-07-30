@@ -14,6 +14,7 @@ ActiveRecord::Schema.define do
   create_table :comments do |t|
     t.references :post, foreign_key: true
     t.references :user, foreign_key: true
+    t.integer :parent_comment_id, foreign_key: true, table_name: :comments
 
     t.timestamps
   end

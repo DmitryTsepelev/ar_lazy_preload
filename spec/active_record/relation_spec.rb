@@ -11,11 +11,13 @@ describe ArLazyPreload::Relation do
     user2.vote_for(post1)
     comment1 = create(:comment, user: user1, post: post1, mentioned_users: [user2])
     user2.vote_for(comment1)
+    create(:comment, user: user2, parent_comment: comment1)
 
     post2 = create(:post, user: user1)
     user1.vote_for(post2)
     comment2 = create(:comment, user: user2, post: post1, mentioned_users: [user1])
     user1.vote_for(comment2)
+    create(:comment, user: user1, parent_comment: comment2)
   end
 
   describe "lazy_preload" do
@@ -189,6 +191,16 @@ describe ArLazyPreload::Relation do
   end
 
   describe "self_join" do
-    it "loads lazy_preloaded association", pending: true
+    include_examples "check initial loading"
+
+    subject { Comment.threads.lazy_preload(:replies) }
+
+    # SELECT "comments".* FROM "comments"
+    # SELECT "comments".* FROM "comments" WHERE "comments"."parent_comment_id" IN (...)
+    it "loads lazy_preloaded association" do
+      expect do
+        subject.map { |comment| comment.replies.map(&:id) }
+      end.to make_database_queries(count: 2)
+    end
   end
 end

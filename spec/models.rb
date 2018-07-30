@@ -22,10 +22,14 @@ end
 class Comment < ActiveRecord::Base
   belongs_to :post
   belongs_to :user
+  belongs_to :parent_comment, class_name: "Comment"
   has_and_belongs_to_many :mentioned_users,
                           join_table: :user_mentions,
                           class_name: "User"
   has_many :votes, as: :voteable
+  has_many :replies, class_name: "Comment", foreign_key: :parent_comment_id
+
+  scope :threads, -> { where(parent_comment_id: nil) }
 end
 
 class Account < ActiveRecord::Base
