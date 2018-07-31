@@ -17,7 +17,11 @@ FactoryBot.define do
 
   factory :account_history
 
-  factory :post
+  factory :post do
+    trait :with_comments do
+      comments { build_list(:comment, 3) }
+    end
+  end
 
   factory :comment
 end

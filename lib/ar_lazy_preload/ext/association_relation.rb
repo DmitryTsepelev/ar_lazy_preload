@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+module ArLazyPreload
+  # ActiveRecord::AssociationRelation patch for setting up lazy_preload_values based on
+  # owner context
+  module AssociationRelation
+    def initialize(*args)
+      super(*args)
+
+      context = owner.lazy_preload_context
+      return if context.blank?
+
+      association_tree_builder = AssociationTreeBuilder.new(context.association_tree)
+      subtree = association_tree_builder.subtree_for(reflection.name)
+
+      lazy_preload!(subtree)
+    end
+
+    delegate :owner, :reflection, to: :proxy_association
+  end
+end

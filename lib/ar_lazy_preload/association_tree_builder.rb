@@ -8,11 +8,19 @@ module ArLazyPreload
     attr_reader :association_tree
 
     def initialize(association_tree)
-      @association_tree = association_tree
+      @association_tree = association_tree.select { |node| node.is_a?(Hash) }
     end
 
     def subtree_for(association)
-      association_tree.select { |node| node.is_a?(Hash) }.map { |node| node[association] }
+      subtree_cache[association]
+    end
+
+    private
+
+    def subtree_cache
+      @subtree_cache ||= Hash.new do |hash, association|
+        hash[association] = association_tree.map { |node| node[association] }
+      end
     end
   end
 end

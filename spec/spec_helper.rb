@@ -42,8 +42,8 @@ ActiveRecord::Base.establish_connection(
   database: ":memory:"
 )
 
-load File.dirname(__FILE__) + "/schema.rb"
-require File.dirname(__FILE__) + "/models.rb"
-require File.dirname(__FILE__) + "/factories.rb"
+load File.dirname(__FILE__) + "/helpers/schema.rb"
+require File.dirname(__FILE__) + "/helpers/models.rb"
+require File.dirname(__FILE__) + "/helpers/factories.rb"
 
 ActiveRecord::Base.logger = Logger.new(STDOUT) if ENV["SQL"]

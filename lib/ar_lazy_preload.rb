@@ -4,11 +4,13 @@ require "ar_lazy_preload/ext/base"
 require "ar_lazy_preload/ext/relation"
 require "ar_lazy_preload/ext/association"
 require "ar_lazy_preload/ext/merger"
+require "ar_lazy_preload/ext/association_relation"
 
 module ArLazyPreload
   ActiveRecord::Base.include(ArLazyPreload::Base)
 
   ActiveRecord::Relation.prepend(ArLazyPreload::Relation)
+  ActiveRecord::AssociationRelation.prepend(ArLazyPreload::AssociationRelation)
   ActiveRecord::Relation::Merger.prepend(ArLazyPreload::Merger)
 
   [
