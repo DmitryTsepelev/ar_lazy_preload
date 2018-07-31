@@ -4,7 +4,7 @@ module ArLazyPreload
   # ActiveRecord::Association patch with a hook for lazy preloading
   module Association
     def load_target
-      owner.preload_association_for_context(association_name)
+      owner.try_preload_lazily(association_name)
       super
     end
 

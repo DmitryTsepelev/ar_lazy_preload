@@ -45,6 +45,13 @@ describe ArLazyPreload::Relation do
     it "sets up lazy_preload_values" do
       expect(subject.lazy_preload_values).to eq([:user])
     end
+
+    # SELECT "comments".* FROM "comments"
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
+    it "loads lazy_preloaded association" do
+      scope = subject
+      expect { scope.each { |comment| comment.user.id } }.to make_database_queries(count: 2)
+    end
   end
 
   describe "#scope" do
@@ -58,6 +65,13 @@ describe ArLazyPreload::Relation do
 
     it "sets up lazy_preload_values" do
       expect(subject.lazy_preload_values).to eq([:user])
+    end
+
+    # SELECT "comments".* FROM "comments"
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
+    it "loads lazy_preloaded association" do
+      scope = subject
+      expect { scope.each { |comment| comment.user.id } }.to make_database_queries(count: 2)
     end
   end
 

@@ -29,19 +29,19 @@ describe ArLazyPreload::Context do
     end
   end
 
-  describe "#preload_association" do
+  describe "#try_preload_lazily" do
     it "does not preload association when it's not in the association_tree" do
-      subject.preload_association(:posts)
+      subject.try_preload_lazily(:posts)
       subject.records.each { |user| expect(user.posts.loaded?).to be_falsey }
     end
 
     it "preloads association when it's in the association_tree" do
-      subject.preload_association(:comments)
+      subject.try_preload_lazily(:comments)
       subject.records.each { |user| expect(user.comments.loaded?).to be_truthy }
     end
 
     it "creates child preloading context" do
-      subject.preload_association(:comments)
+      subject.try_preload_lazily(:comments)
       subject.records.map(&:comments).flatten.each do |comment|
         expect(comment.lazy_preload_context).not_to be_nil
       end

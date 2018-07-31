@@ -23,5 +23,7 @@ FactoryBot.define do
     end
   end
 
-  factory :comment
+  factory :comment do
+    user
+  end
 end

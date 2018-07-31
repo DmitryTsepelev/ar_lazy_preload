@@ -24,7 +24,7 @@ module ArLazyPreload
 
     # This method checks if the association is present in the association_tree and preloads for all
     # objects in the context it if needed.
-    def preload_association(association_name)
+    def try_preload_lazily(association_name)
       return unless association_needs_preload?(association_name)
 
       preloader.preload(records, association_name)
