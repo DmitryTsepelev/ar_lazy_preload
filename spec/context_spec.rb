@@ -13,7 +13,6 @@ describe ArLazyPreload::Context do
 
   subject! do
     described_class.new(
-      model: User,
       records: [user_with_post, user_without_posts, nil],
       association_tree: [comments: :post]
     )

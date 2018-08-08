@@ -7,46 +7,42 @@ module ArLazyPreload
   # belonging to the same context and association name it will create and attach a new context to
   # the associated records based on the parent association tree.
   class AssociatedContextBuilder
+    # Initiates lazy preload context the records loaded lazily
+    def self.prepare(*args)
+      new(*args).perform
+    end
+
     attr_reader :parent_context, :association_name
 
+    # :parent_context - root context
+    # :association_name - lazily preloaded association name
     def initialize(parent_context:, association_name:)
       @parent_context = parent_context
       @association_name = association_name
     end
 
-    delegate :records, :association_tree, :model, to: :parent_context
-
     # Takes all the associated records for the records, attached to the :parent_context and creates
     # a preloading context for them
     def perform
-      association_tree_builder = AssociationTreeBuilder.new(association_tree)
-      child_association_tree = association_tree_builder.subtree_for(association_name)
-      return if child_association_tree.empty? || associated_records.empty?
+      records_by_class = parent_context.records.group_by(&:class)
 
-      Context.new(
-        model: reflection.klass,
-        records: associated_records,
-        association_tree: child_association_tree
-      )
+      associated_records = records_by_class.map do |klass, klass_records|
+        associated_records_for(klass, klass_records)
+      end.flatten
+
+      Context.register(records: associated_records, association_tree: child_association_tree)
     end
 
     private
 
-    def associated_records
-      @associated_records ||=
-        begin
-          record_associations = records.map { |record| record.send(association_name) }
-
-          if reflection.collection?
-            record_associations.map(&:target).flatten
-          else
-            record_associations
-          end
-        end
+    def child_association_tree
+      AssociationTreeBuilder.new(parent_context.association_tree).subtree_for(association_name)
     end
 
-    def reflection
-      @reflection = model.reflect_on_association(association_name)
+    def associated_records_for(klass, records)
+      record_associations = records.map { |record| record.send(association_name) }
+      reflection = klass.reflect_on_association(association_name)
+      reflection.collection? ? record_associations.map(&:target).flatten : record_associations
     end
   end
 end

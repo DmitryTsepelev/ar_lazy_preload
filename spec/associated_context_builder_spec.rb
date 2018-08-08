@@ -13,7 +13,6 @@ describe ArLazyPreload::AssociatedContextBuilder do
     expect(user_with_post.account).not_to be_nil
 
     parent_context = ArLazyPreload::Context.new(
-      model: User,
       records: [user_with_post, user_without_posts],
       association_tree: [{ account: :account_history }]
     )
@@ -28,7 +27,6 @@ describe ArLazyPreload::AssociatedContextBuilder do
 
   it "supports collection associations" do
     parent_context = ArLazyPreload::Context.new(
-      model: User,
       records: [user_with_post, user_without_posts],
       association_tree: [{ posts: :comments }]
     )
@@ -41,9 +39,30 @@ describe ArLazyPreload::AssociatedContextBuilder do
     user_with_post.posts.each { |post| expect(post.lazy_preload_context).not_to be_nil }
   end
 
+  it "supports polymorphic associations" do
+    post = user_with_post.posts.first
+    vote_for_post = build(:vote, user: user_without_posts, voteable: post)
+    comment = build(:comment, user: user_without_posts, post: post)
+    vote_for_comment = build(:vote, user: user_with_post, voteable: comment)
+
+    records = [vote_for_post, vote_for_comment]
+    records.each { |vote| expect(vote.voteable).not_to be_nil }
+
+    parent_context = ArLazyPreload::Context.new(
+      records: records,
+      association_tree: [voteable: :user]
+    )
+
+    described_class.new(
+      parent_context: parent_context,
+      association_name: :voteable
+    ).perform
+
+    [post, comment].each { |voteable| expect(voteable.lazy_preload_context).not_to be_nil }
+  end
+
   it "skips creating context when child association tree is blank" do
     parent_context = ArLazyPreload::Context.new(
-      model: User,
       records: [user_with_post, user_without_posts],
       association_tree: [:posts]
     )
@@ -60,7 +79,6 @@ describe ArLazyPreload::AssociatedContextBuilder do
 
   it "skips creating context when list of associated records is blank" do
     parent_context = ArLazyPreload::Context.new(
-      model: User,
       records: [user_without_posts],
       association_tree: [{ posts: :comments }]
     )

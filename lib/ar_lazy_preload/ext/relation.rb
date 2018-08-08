@@ -9,9 +9,9 @@ module ArLazyPreload
     # for lazy preloading to loaded each record
     def load
       need_context = !loaded?
-      old_load_result = super
-      setup_lazy_preload_context if need_context
-      old_load_result
+      result = super
+      Context.register(records: @records, association_tree: lazy_preload_values) if need_context
+      result
     end
 
     # Specify relationships to be loaded lazily when association is loaded for the first time. For
@@ -49,15 +49,5 @@ module ArLazyPreload
     private
 
     attr_writer :lazy_preload_values
-
-    def setup_lazy_preload_context
-      return if lazy_preload_values.empty? || @records.empty?
-
-      ArLazyPreload::Context.new(
-        model: model,
-        records: @records,
-        association_tree: lazy_preload_values
-      )
-    end
   end
 end
