@@ -136,7 +136,7 @@ describe ArLazyPreload do
     # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
     it "loads lazy_preloaded association" do
       expect do
-        subject.each { |comment| comment.user.posts.map(&:id) if comment.user.present? }
+        subject.each { |comment| comment.user.posts.map(&:id) }
       end.to make_database_queries(count: 3)
     end
 
@@ -147,7 +147,7 @@ describe ArLazyPreload do
     it "loads embedded lazy_preloaded association" do
       expect do
         subject.map do |comment|
-          comment.user.posts.map { |p| p.comments.map(&:id) } if comment.user.present?
+          comment.user.posts.map { |p| p.comments.map(&:id) }
         end
       end.to make_database_queries(count: 4)
     end

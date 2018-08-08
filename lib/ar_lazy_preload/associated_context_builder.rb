@@ -19,7 +19,7 @@ module ArLazyPreload
     # Takes all the associated records for the records, attached to the :parent_context and creates
     # a preloading context for them
     def perform
-      return if child_association_tree.blank? || associated_records.blank?
+      return if child_association_tree.empty? || associated_records.empty?
 
       Context.new(
         model: reflection.klass,
