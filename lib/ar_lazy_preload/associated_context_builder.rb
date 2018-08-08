@@ -19,6 +19,8 @@ module ArLazyPreload
     # Takes all the associated records for the records, attached to the :parent_context and creates
     # a preloading context for them
     def perform
+      association_tree_builder = AssociationTreeBuilder.new(association_tree)
+      child_association_tree = association_tree_builder.subtree_for(association_name)
       return if child_association_tree.empty? || associated_records.empty?
 
       Context.new(
@@ -30,29 +32,21 @@ module ArLazyPreload
 
     private
 
-    def child_association_tree
-      @child_association_tree ||= association_tree_builder.subtree_for(association_name)
-    end
-
-    def association_tree_builder
-      @association_tree_builder ||= AssociationTreeBuilder.new(association_tree)
-    end
-
     def associated_records
       @associated_records ||=
-        if reflection.collection?
-          record_associations.map(&:target).flatten
-        else
-          record_associations
+        begin
+          record_associations = records.map { |record| record.send(association_name) }
+
+          if reflection.collection?
+            record_associations.map(&:target).flatten
+          else
+            record_associations
+          end
         end
     end
 
     def reflection
       @reflection = model.reflect_on_association(association_name)
-    end
-
-    def record_associations
-      @record_associations ||= records.map { |record| record.send(association_name) }
     end
   end
 end
