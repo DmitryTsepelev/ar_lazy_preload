@@ -26,4 +26,6 @@ FactoryBot.define do
   factory :comment do
     user
   end
+
+  factory :vote
 end

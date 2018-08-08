@@ -9,9 +9,6 @@ module ArLazyPreload
 
     attr_accessor :lazy_preload_context
 
-    # When context has been set, this method would cause preloading association with a given name
-    def try_preload_lazily(association_name)
-      lazy_preload_context.try_preload_lazily(association_name) if lazy_preload_context.present?
-    end
+    delegate :try_preload_lazily, to: :lazy_preload_context, allow_nil: true
   end
 end

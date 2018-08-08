@@ -8,7 +8,7 @@ module ArLazyPreload
       super(*args)
 
       context = owner.lazy_preload_context
-      return if context.blank?
+      return if context.nil?
 
       association_tree_builder = AssociationTreeBuilder.new(context.association_tree)
       subtree = association_tree_builder.subtree_for(reflection.name)

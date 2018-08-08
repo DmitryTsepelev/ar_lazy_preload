@@ -136,7 +136,7 @@ describe ArLazyPreload do
     # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
     it "loads lazy_preloaded association" do
       expect do
-        subject.each { |comment| comment.user.posts.map(&:id) if comment.user.present? }
+        subject.each { |comment| comment.user.posts.map(&:id) }
       end.to make_database_queries(count: 3)
     end
 
@@ -147,7 +147,7 @@ describe ArLazyPreload do
     it "loads embedded lazy_preloaded association" do
       expect do
         subject.map do |comment|
-          comment.user.posts.map { |p| p.comments.map(&:id) } if comment.user.present?
+          comment.user.posts.map { |p| p.comments.map(&:id) }
         end
       end.to make_database_queries(count: 4)
     end
@@ -156,13 +156,22 @@ describe ArLazyPreload do
   describe "polymorphic" do
     include_examples "check initial loading"
 
-    subject { Vote.lazy_preload(:voteable) }
+    subject { Vote.lazy_preload(voteable: :user) }
 
     # SELECT "votes".* FROM "votes"
     # SELECT "posts".* FROM "posts" WHERE "posts"."id" IN (...)
     # SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (...)
     it "loads lazy_preloaded association" do
       expect { subject.map { |vote| vote.voteable.id } }.to make_database_queries(count: 3)
+    end
+
+    # SELECT "votes".* FROM "votes"
+    # SELECT "posts".* FROM "posts" WHERE "posts"."id" IN (...)
+    # SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (...)
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...) - for posts
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...) - for comments
+    it "loads embedded lazy_preloaded association" do
+      expect { subject.map { |vote| vote.voteable.user.id } }.to make_database_queries(count: 5)
     end
   end
 
