@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR [#3](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/3)] Automatic preloading ([@DmitryTsepelev][])
+
 ## 0.1.1 (2018-08-08)
 
 - [PR [#1](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/1)] Cleanup code, fix initiating child context for preload associations ([@DmitryTsepelev][])

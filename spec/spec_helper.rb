@@ -29,6 +29,12 @@ RSpec.configure do |config|
   config.around(:each) do |example|
     DatabaseCleaner.cleaning { example.run }
   end
+
+  config.after(:each) do
+    if ArLazyPreload.instance_variable_defined?(:@config)
+      ArLazyPreload.remove_instance_variable(:@config)
+    end
+  end
 end
 
 RSpec.shared_examples "check initial loading" do
