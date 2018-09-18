@@ -10,13 +10,23 @@ Lazy loading associations for the ActiveRecord models. `#includes`, `#eager_load
 
 This gem allows to set up _lazy_ preloading for associations - it won't load anything until association is called for a first time, but when it happens - it loads all the associated records for all records from the initial relation in a single query.
 
-For example, if we define a following relation
+## Installation
+
+Add this line to your application's Gemfile, and you're all set:
+
+```ruby
+gem "ar_lazy_preload"
+```
+
+## Usage
+
+For example, if we define the following relation
 
 ```ruby
 users = User.lazy_preload(:posts).limit(10)
 ```
 
-and use it in a following way
+and use it in the following way
 
 ```ruby
 users.map(&:first_name)
@@ -28,7 +38,7 @@ there will be one query because we've never accessed posts:
 SELECT * FROM users LIMIT 10
 ```
 
-Hovever, when we try to load posts
+However, when we try to load posts
 
 ```ruby
 users.map(&:posts)
@@ -40,13 +50,15 @@ there will be one more request for posts:
 SELECT * FROM posts WHERE user_id in (...)
 ```
 
-## Installation
+## Auto preloading
 
-Add this line to your application's Gemfile, and you're all set:
+If you want the gem to be even more lazy - you can configure it to load all the associations lazily without specifying them explicitly. In order to do that you'll need to change the configuration in the following way:
 
 ```ruby
-gem "ar_lazy_preload"
+ArLazyPreload.config.auto_preload = true
 ```
+
+After that there is no need to call `lazy_preload` on the association, everything would be loaded lazily.
 
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

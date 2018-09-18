@@ -11,7 +11,8 @@ module ArLazyPreload
   class Context
     # Initiates lazy preload context for given records
     def self.register(records:, association_tree:)
-      return if records.empty? || association_tree.empty?
+      return if records.empty? || association_tree.empty? && !ArLazyPreload.config.auto_preload?
+
       ArLazyPreload::Context.new(records: records, association_tree: association_tree)
     end
 
@@ -30,6 +31,7 @@ module ArLazyPreload
     # objects in the context it if needed.
     def try_preload_lazily(association_name)
       return unless association_needs_preload?(association_name)
+
       preloader.preload(records, association_name)
       AssociatedContextBuilder.prepare(parent_context: self, association_name: association_name)
     end
@@ -37,6 +39,8 @@ module ArLazyPreload
     private
 
     def association_needs_preload?(association_name)
+      return true if ArLazyPreload.config.auto_preload?
+
       association_tree.any? do |node|
         if node.is_a?(Symbol)
           node == association_name
