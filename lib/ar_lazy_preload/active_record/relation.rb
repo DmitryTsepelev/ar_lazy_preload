@@ -36,7 +36,6 @@ module ArLazyPreload
     end
 
     def lazy_preload!(*args)
-      args.reject!(&:blank?)
       args.flatten!
       self.lazy_preload_values += args
       self

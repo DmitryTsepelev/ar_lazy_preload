@@ -9,3 +9,4 @@ spec/dummy/yarn-error.log
 spec/dummy/storage/
 spec/dummy/tmp/
 coverage/
+Gemfile.lock

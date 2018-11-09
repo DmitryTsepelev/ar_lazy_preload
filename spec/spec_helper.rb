@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+ENV["RAILS_ENV"] = "test"
+
 require "coveralls"
 Coveralls.wear!
+
+require_relative "dummy/config/environment"
 
 require "active_record"
 require "db_query_matchers"
