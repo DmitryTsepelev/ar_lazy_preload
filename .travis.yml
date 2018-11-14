@@ -1,6 +1,19 @@
+# Send builds to container-based infrastructure
+# http://docs.travis-ci.com/user/workers/container-based-infrastructure/
+sudo: false
 language: ruby
+cache:
+- bundler
 rvm:
-  - 2.5.1
+  - 2.3
+  - 2.4
+  - 2.5
+  - ruby-head
+gemfile:
+- gemfiles/rails_4_2.gemfile
+- gemfiles/rails_5_0.gemfile
+- gemfiles/rails_5_1.gemfile
+- gemfiles/rails_5_2.gemfile
 
 notifications:
   email: false
@@ -10,12 +23,5 @@ matrix:
   include:
     - rvm: ruby-head
       gemfile: gemfiles/railsmaster.gemfile
-    - rvm: 2.5.0
-      gemfile: Gemfile
-    - rvm: 2.4.3
-      gemfile: Gemfile
-    - rvm: 2.3.1
-      gemfile: gemfiles/activerecord42.gemfile
   allow_failures:
     - rvm: ruby-head
-      gemfile: gemfiles/railsmaster.gemfile
