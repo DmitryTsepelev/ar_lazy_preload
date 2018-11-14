@@ -33,27 +33,6 @@ describe ArLazyPreload::Relation do
     end
   end
 
-  describe "#target_scope" do
-    subject do
-      relation = Post.lazy_preload(comments: :user)
-      association = relation.first.association(:comments)
-      association.target_scope
-    end
-
-    it { is_expected.to be_a(ActiveRecord::AssociationRelation) }
-
-    it "sets up lazy_preload_values" do
-      expect(subject.lazy_preload_values).to eq([:user])
-    end
-
-    # SELECT "comments".* FROM "comments"
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
-    it "loads lazy_preloaded association" do
-      scope = subject
-      expect { scope.each { |comment| comment.user.id } }.to make_database_queries(count: 2)
-    end
-  end
-
   describe "#scope" do
     subject do
       relation = Post.lazy_preload(comments: :user).load

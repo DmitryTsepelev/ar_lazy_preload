@@ -10,6 +10,7 @@ spec/dummy/storage/
 spec/dummy/tmp/
 coverage/
 Gemfile.lock
+Gemfile.local
 
 # Ignore Appraisal related files
 gemfiles/*.gemfile.lock
