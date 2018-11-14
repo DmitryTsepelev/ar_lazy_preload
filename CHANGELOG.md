@@ -2,6 +2,7 @@
 
 ## master
 
+- [PR [#10](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/10)] Test against edge rails version ([@DmitryTsepelev][])
 - [PR [#7](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/7)] Test against main rails versions ([@PikachuEXE][])
 
 ## 0.2.0 (2018-09-18)

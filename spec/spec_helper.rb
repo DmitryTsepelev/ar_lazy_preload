@@ -26,6 +26,10 @@ RSpec.configure do |config|
   config.color = true
 
   config.before(:suite) do
+    if ActiveRecord::Base.connection.respond_to?(:materialize_transactions)
+      ActiveRecord::Base.connection.disable_lazy_transactions!
+    end
+
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end

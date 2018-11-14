@@ -24,3 +24,7 @@ Metrics/LineLength:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
+
+Naming/FileName:
+  Exclude:
+    - 'Appraisals'
