@@ -5,6 +5,7 @@ require "ar_lazy_preload/active_record/relation"
 require "ar_lazy_preload/active_record/association"
 require "ar_lazy_preload/active_record/merger"
 require "ar_lazy_preload/active_record/association_relation"
+require "ar_lazy_preload/active_record/collection_proxy"
 
 module ArLazyPreload
   class Railtie < Rails::Railtie
@@ -20,6 +21,8 @@ module ArLazyPreload
           ActiveRecord::Associations::CollectionAssociation,
           ActiveRecord::Associations::Association
         ].each { |klass| klass.prepend(Association) }
+
+        ActiveRecord::Associations::CollectionProxy.prepend(CollectionProxy)
       end
     end
   end
