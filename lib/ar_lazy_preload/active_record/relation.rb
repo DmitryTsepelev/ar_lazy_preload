@@ -12,7 +12,7 @@ module ArLazyPreload
       result = super
       if need_context
         Context.register(
-          records: _ar_lazy_preload_records,
+          records: ar_lazy_preload_records,
           association_tree: lazy_preload_values
         )
       end
@@ -52,7 +52,7 @@ module ArLazyPreload
 
     private
 
-    def _ar_lazy_preload_records
+    def ar_lazy_preload_records
       @records
     end
 

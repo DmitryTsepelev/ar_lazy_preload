@@ -2,6 +2,9 @@
 
 ## master
 
+## 0.2.2 (2018-11-15)
+
+- [PR [#9](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/9)] Fix crash in CollectionProxy ([@PikachuEXE][])
 - [PR [#10](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/10)] Test against edge rails version ([@DmitryTsepelev][])
 - [PR [#7](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/7)] Test against main rails versions ([@PikachuEXE][])
 
