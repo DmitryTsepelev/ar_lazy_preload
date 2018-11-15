@@ -10,7 +10,12 @@ module ArLazyPreload
     def load
       need_context = !loaded?
       result = super
-      Context.register(records: @records, association_tree: lazy_preload_values) if need_context
+      if need_context
+        Context.register(
+          records: _ar_lazy_preload_records,
+          association_tree: lazy_preload_values
+        )
+      end
       result
     end
 
@@ -46,6 +51,10 @@ module ArLazyPreload
     end
 
     private
+
+    def _ar_lazy_preload_records
+      @records
+    end
 
     attr_writer :lazy_preload_values
   end
