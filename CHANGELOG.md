@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.2.3 (2018-11-20)
+
+- [PR [#13](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/13)] Fix association loading when specified in hash inside array ([@PikachuEXE][])
+
 ## 0.2.2 (2018-11-15)
 
 - [PR [#9](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/9)] Fix crash in CollectionProxy ([@PikachuEXE][])
