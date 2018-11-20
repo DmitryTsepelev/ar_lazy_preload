@@ -4,6 +4,8 @@ require "spec_helper"
 
 describe ArLazyPreload::Relation do
   let!(:post) { create(:post, :with_comments) }
+  let!(:user_1) { create(:user, :with_account, :with_one_post_and_comments) }
+  let!(:user_2) { create(:user, :with_account, :with_one_post_and_comments) }
 
   describe "#lazy_preload" do
     it "responds to lazy_preload" do
@@ -30,6 +32,29 @@ describe ArLazyPreload::Relation do
     it "stores lazy_preload_values" do
       relation = User.lazy_preload(posts: :user)
       expect(relation.lazy_preload_values).to eq([posts: :user])
+    end
+
+    # SELECT "comments".* FROM "comments"
+    # SELECT "posts".* FROM "posts" WHERE "posts"."id" IN (...)
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
+    it "loads lazy_preloaded association" do
+      comments = Comment.lazy_preload(
+        post: [
+          {
+            user: [
+              {
+                posts: :comments
+              }
+            ]
+          }
+        ]
+      )
+      expect do
+        comments.each do |comment|
+          comment&.post&.user&.id
+        end
+      end.to make_database_queries(count: 3)
     end
   end
 
