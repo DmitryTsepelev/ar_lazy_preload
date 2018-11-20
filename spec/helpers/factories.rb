@@ -9,6 +9,10 @@ FactoryBot.define do
     trait :with_one_post do
       posts { build_list(:post, 1) }
     end
+
+    trait :with_one_post_and_comments do
+      posts { build_list(:post, 1, :with_comments) }
+    end
   end
 
   factory :account do

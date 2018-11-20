@@ -38,14 +38,16 @@ module ArLazyPreload
 
     private
 
-    def association_needs_preload?(association_name)
+    def association_needs_preload?(association_name, node_tree = association_tree)
       return true if ArLazyPreload.config.auto_preload?
 
-      association_tree.any? do |node|
+      node_tree.any? do |node|
         if node.is_a?(Symbol)
           node == association_name
         elsif node.is_a?(Hash)
           node.key?(association_name)
+        elsif node.is_a?(Array)
+          association_needs_preload?(association_name, node)
         end
       end
     end
