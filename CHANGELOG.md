@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.2.4 (2018-11-21)
+
+- [PR [#14](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/14)] Fix deep association preloading when specified via array of hash  ([@PikachuEXE][])
+
 ## 0.2.3 (2018-11-20)
 
 - [PR [#13](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/13)] Fix association loading when specified in hash inside array ([@PikachuEXE][])

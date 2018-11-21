@@ -39,20 +39,11 @@ describe ArLazyPreload::Relation do
     # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
     # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
     it "loads lazy_preloaded association only when needed" do
-      comments = Comment.lazy_preload(
-        post: [
-          {
-            user: [
-              {
-                posts: :comments
-              }
-            ]
-          }
-        ]
-      )
+      comments = Comment.lazy_preload(post: [{ user: [{ posts: :comments }] }])
+
       expect do
         comments.each do |comment|
-          comment&.post&.user&.posts&.each { |post| post.id }
+          comment&.post&.user&.posts&.each(&:id)
         end
       end.to make_database_queries(count: 4)
     end

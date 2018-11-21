@@ -26,41 +26,13 @@ describe ArLazyPreload::AssociationTreeBuilder do
     end
 
     it "supports arrays in single hash" do
-      subject = described_class.new(
-        user: [
-          {
-            posts: :comments
-          }
-        ]
-      )
-      expect(subject.subtree_for(:user)).to eq(
-        [
-          {
-            posts: :comments
-          }
-        ]
-      )
+      subject = described_class.new(user: [{ posts: :comments }])
+      expect(subject.subtree_for(:user)).to eq([{ posts: :comments }])
     end
 
     it "supports arrays in array of hashes" do
-      subject = described_class.new(
-        [
-          {
-            user: [
-              {
-                posts: :comments
-              }
-            ]
-          }
-        ]
-      )
-      expect(subject.subtree_for(:user)).to eq(
-        [
-          {
-            posts: :comments
-          }
-        ]
-      )
+      subject = described_class.new([{ user: [{ posts: :comments }] }])
+      expect(subject.subtree_for(:user)).to eq([{ posts: :comments }])
     end
   end
 end
