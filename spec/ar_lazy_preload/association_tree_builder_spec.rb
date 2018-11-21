@@ -11,6 +11,10 @@ describe ArLazyPreload::AssociationTreeBuilder do
   end
 
   context "#subtree_for" do
+    it "does not support other inputs" do
+      expect { described_class.new(:boom) }.to raise_error(NotImplementedError)
+    end
+
     it "supports symbols" do
       subject = described_class.new([:user])
       expect(subject.subtree_for(:user)).to eq([])
@@ -19,6 +23,44 @@ describe ArLazyPreload::AssociationTreeBuilder do
     it "supports hashes" do
       subject = described_class.new([user: :comments])
       expect(subject.subtree_for(:user)).to eq([:comments])
+    end
+
+    it "supports arrays in single hash" do
+      subject = described_class.new(
+        user: [
+          {
+            posts: :comments
+          }
+        ]
+      )
+      expect(subject.subtree_for(:user)).to eq(
+        [
+          {
+            posts: :comments
+          }
+        ]
+      )
+    end
+
+    it "supports arrays in array of hashes" do
+      subject = described_class.new(
+        [
+          {
+            user: [
+              {
+                posts: :comments
+              }
+            ]
+          }
+        ]
+      )
+      expect(subject.subtree_for(:user)).to eq(
+        [
+          {
+            posts: :comments
+          }
+        ]
+      )
     end
   end
 end

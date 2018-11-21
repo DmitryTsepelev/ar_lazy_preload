@@ -19,7 +19,3 @@ appraise "rails_5_2" do
   version = "~> 5.2.0"
   gem "activerecord", version
 end
-
-appraise "railsmaster" do
-  gem "activerecord", github: "rails/rails/activerecord"
-end

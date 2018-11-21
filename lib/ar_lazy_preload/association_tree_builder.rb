@@ -8,7 +8,19 @@ module ArLazyPreload
     attr_reader :association_tree
 
     def initialize(association_tree)
-      @association_tree = association_tree.select { |node| node.is_a?(Hash) }
+      # Since `association_tree` can be an array or a single hash
+      # Converting it to an array is easier for processing
+      # like jquery
+      @association_tree =
+        case association_tree
+        when Array
+          association_tree
+        when Hash
+          [association_tree]
+        else
+          raise NotImplementedError,
+                "unexpected association_tree with class #{association_tree.class}"
+        end.select { |node| node.is_a?(Hash) }
     end
 
     def subtree_for(association)
@@ -19,7 +31,7 @@ module ArLazyPreload
 
     def subtree_cache
       @subtree_cache ||= Hash.new do |hash, association|
-        hash[association] = association_tree.map { |node| node[association] }
+        hash[association] = association_tree.map { |node| node[association] }.flatten
       end
     end
   end
