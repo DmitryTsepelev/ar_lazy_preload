@@ -46,8 +46,6 @@ module ArLazyPreload
           node == association_name
         elsif node.is_a?(Hash)
           node.key?(association_name)
-        elsif node.is_a?(Array)
-          association_needs_preload?(association_name, node)
         end
       end
     end
