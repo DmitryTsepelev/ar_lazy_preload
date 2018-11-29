@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.2.5 (2018-11-29)
+
+- [PR [#15](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/15)] Fix performance issue with benchmark ([@PikachuEXE][])
+
 ## 0.2.4 (2018-11-21)
 
 - [PR [#14](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/14)] Fix deep association preloading when specified via array of hash  ([@PikachuEXE][])
