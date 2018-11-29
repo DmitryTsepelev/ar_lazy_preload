@@ -6,6 +6,9 @@
 
 # ArLazyPreload
 
+<a href="https://evilmartians.com/?utm_source=ar_lazy_preload">
+<img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54"></a>
+
 Lazy loading associations for the ActiveRecord models. `#includes`, `#eager_load` and `#preload` are built-in methods to avoid N+1 problem, but sometimes when DB request is made we don't know what associations we are going to need later (for instance when your API allows client to define a list of loaded associations dynamically). The only possible solution for such cases is to load _all_ the associations we might need, but it can be a huge overhead.
 
 This gem allows to set up _lazy_ preloading for associations - it won't load anything until association is called for a first time, but when it happens - it loads all the associated records for all records from the initial relation in a single query.
