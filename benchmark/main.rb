@@ -33,7 +33,7 @@ user_2 = User.create!
   end
 end
 
-Benchmark.bm(20) do |x|
+Benchmark.bm(40) do |x|
   # Use AR's eager loading
   x.report("AR eager loading: ") do
     ::User.all.includes(posts: :comments).map do |user|
@@ -44,7 +44,20 @@ Benchmark.bm(20) do |x|
   end
 
   # Use ar_lazy_preload
-  x.report("AR lazy preloading: ") do
+  x.report("AR lazy preloading w/o auto_preload: ") do
+    ArLazyPreload.config.auto_preload = false
+
+    ::User.all.lazy_preload(posts: :comments).map do |user|
+      user.posts.to_a.each do |post|
+        post.comments.to_a.each {|c| c.id}
+      end
+    end
+  end
+
+  # Use ar_lazy_preload
+  x.report("AR lazy preloading w/ auto_preload: ") do
+    ArLazyPreload.config.auto_preload = true
+
     ::User.all.lazy_preload(posts: :comments).map do |user|
       user.posts.to_a.each do |post|
         post.comments.to_a.each {|c| c.id}
