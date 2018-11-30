@@ -24,11 +24,11 @@ module ArLazyPreload
     # Takes all the associated records for the records, attached to the :parent_context and creates
     # a preloading context for them
     def perform
-      records_by_class = parent_context.records.group_by(&:class)
-
-      associated_records = records_by_class.map do |klass, klass_records|
-        associated_records_for(klass, klass_records)
-      end.flatten
+      associated_records = parent_context.records.flat_map do |record|
+        record_association = record.public_send(association_name)
+        reflection = reflection_cache[record.class]
+        reflection.collection? ? record_association.target : record_association
+      end
 
       Context.register(records: associated_records, association_tree: child_association_tree)
     end
@@ -36,13 +36,16 @@ module ArLazyPreload
     private
 
     def child_association_tree
+      # `association_tree` is unnecessary when auto preload is enabled
+      return nil if ArLazyPreload.config.auto_preload?
+
       AssociationTreeBuilder.new(parent_context.association_tree).subtree_for(association_name)
     end
 
-    def associated_records_for(klass, records)
-      record_associations = records.map { |record| record.send(association_name) }
-      reflection = klass.reflect_on_association(association_name)
-      reflection.collection? ? record_associations.map(&:target).flatten : record_associations
+    def reflection_cache
+      @reflection_cache ||= Hash.new do |hash, klass|
+        hash[klass] = klass.reflect_on_association(association_name)
+      end
     end
   end
 end

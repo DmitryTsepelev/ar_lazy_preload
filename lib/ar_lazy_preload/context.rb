@@ -12,6 +12,10 @@ module ArLazyPreload
   class Context
     # Initiates lazy preload context for given records
     def self.register(records:, association_tree:)
+      if ArLazyPreload.config.auto_preload?
+        # `association_tree` is unnecessary when auto preload is enabled
+        return ArLazyPreload::Context.new(records: records, association_tree: nil)
+      end
       return if records.empty? || association_tree.empty? && !ArLazyPreload.config.auto_preload?
 
       ArLazyPreload::Context.new(records: records, association_tree: association_tree)
