@@ -20,29 +20,45 @@ describe ArLazyPreload::Context do
 
   describe "#initialize" do
     it "assigns context for each record" do
-      subject.records.each { |user| expect(user.lazy_preload_context).to eq(subject) }
+      subject.records.each do |user|
+        next if user.nil?
+
+        expect(user.lazy_preload_context).to eq(subject)
+      end
     end
 
-    it "compacts records" do
-      expect(subject.records.size).to eq(2)
+    it "does not compact records" do
+      expect(subject.records.size).to eq(3)
     end
   end
 
   describe "#try_preload_lazily" do
     it "does not preload association when it's not in the association_tree" do
       subject.try_preload_lazily(:posts)
-      subject.records.each { |user| expect(user.posts.loaded?).to be_falsey }
+      subject.records.each do |user|
+        next if user.nil?
+
+        expect(user.posts.loaded?).to be_falsey
+      end
     end
 
     it "preloads association when it's in the association_tree" do
       subject.try_preload_lazily(:comments)
-      subject.records.each { |user| expect(user.comments.loaded?).to be_truthy }
+      subject.records.each do |user|
+        next if user.nil?
+
+        expect(user.comments.loaded?).to be_truthy
+      end
     end
 
     it "creates child preloading context" do
       subject.try_preload_lazily(:comments)
-      subject.records.map(&:comments).flatten.each do |comment|
-        expect(comment.lazy_preload_context).not_to be_nil
+      subject.records.each do |user|
+        next if user.nil?
+
+        user.comments.each do |comment|
+          expect(comment.lazy_preload_context).not_to be_nil
+        end
       end
     end
   end

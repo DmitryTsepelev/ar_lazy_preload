@@ -25,6 +25,8 @@ module ArLazyPreload
     # a preloading context for them
     def perform
       associated_records = parent_context.records.flat_map do |record|
+        next if record.nil?
+
         record_association = record.public_send(association_name)
         reflection = reflection_cache[record.class]
         reflection.collection? ? record_association.target : record_association
