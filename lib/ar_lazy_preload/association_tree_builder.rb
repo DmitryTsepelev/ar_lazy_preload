@@ -31,7 +31,7 @@ module ArLazyPreload
 
     def subtree_cache
       @subtree_cache ||= Hash.new do |hash, association|
-        hash[association] = association_tree.map { |node| node[association] }.flatten
+        hash[association] = association_tree.flat_map { |node| node[association] }
       end
     end
   end

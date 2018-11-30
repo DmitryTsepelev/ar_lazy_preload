@@ -28,4 +28,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "database_cleaner"
   s.add_development_dependency "factory_bot"
   s.add_development_dependency "appraisal"
+  s.add_development_dependency "memory_profiler"
 end

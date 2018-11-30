@@ -7,6 +7,9 @@ module ArLazyPreload
     def initialize(*args)
       super(*args)
 
+      # lazy_preload_values is unnecessary when auto preload enabled
+      return if ArLazyPreload.config.auto_preload?
+
       context = owner.lazy_preload_context
       return if context.nil?
 

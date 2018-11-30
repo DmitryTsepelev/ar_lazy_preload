@@ -11,6 +11,10 @@ module ArLazyPreload
   class Context
     # Initiates lazy preload context for given records
     def self.register(records:, association_tree:)
+      if ArLazyPreload.config.auto_preload?
+        # `association_tree` is unnecessary when auto preload is enabled
+        return ArLazyPreload::Context.new(records: records, association_tree: nil)
+      end
       return if records.empty? || association_tree.empty? && !ArLazyPreload.config.auto_preload?
 
       ArLazyPreload::Context.new(records: records, association_tree: association_tree)
@@ -21,10 +25,14 @@ module ArLazyPreload
     # :records - array of ActiveRecord instances
     # :association_tree - list of symbols or hashes representing a tree of preloadable associations
     def initialize(records:, association_tree:)
-      @records = records.compact
+      @records = records
       @association_tree = association_tree
 
-      @records.each { |record| record.lazy_preload_context = self }
+      @records.each do |record|
+        next if record.nil?
+
+        record.lazy_preload_context = self
+      end
     end
 
     # This method checks if the association is present in the association_tree and preloads for all
