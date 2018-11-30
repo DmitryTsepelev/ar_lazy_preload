@@ -12,7 +12,7 @@ describe ArLazyPreload::AssociationTreeBuilder do
 
   context "#subtree_for" do
     it "does not support other inputs" do
-      expect { described_class.new(:boom) }.to raise_error(NotImplementedError)
+      expect { described_class.new(:boom) }.to raise_error(ArgumentError)
     end
 
     it "supports symbols" do
