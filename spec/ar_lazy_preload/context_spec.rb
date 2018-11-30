@@ -45,5 +45,10 @@ describe ArLazyPreload::Context do
         expect(comment.lazy_preload_context).not_to be_nil
       end
     end
+
+    it "not loads association twice" do
+      expect(ArLazyPreload::AssociatedContextBuilder).to receive(:prepare).once
+      2.times { subject.try_preload_lazily(:comments) }
+    end
   end
 end
