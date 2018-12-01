@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "set"
 require "ar_lazy_preload/associated_context_builder"
 
 module ArLazyPreload
@@ -42,6 +43,9 @@ module ArLazyPreload
 
       preloader.preload(records, association_name)
       AssociatedContextBuilder.prepare(parent_context: self, association_name: association_name)
+      # Our tracking of loading state
+      # Otherwise `#preload` will be called many times even when association is loaded
+      mark_association_as_loaded(association_name)
     end
 
     private
@@ -60,14 +64,17 @@ module ArLazyPreload
       end
     end
 
-    def association_loaded?(association_name)
-      records.all? do |record|
-        # It's fine to be nil
-        # No association exists, so it's "loaded"
-        next true if record.nil?
+    def mark_association_as_loaded(association_name)
+      loaded_association_names.add(association_name)
+    end
 
-        record.association(association_name).loaded?
-      end
+    def association_loaded?(association_name)
+      loaded_association_names.include?(association_name)
+    end
+
+    def loaded_association_names
+      @loaded_association_names ||= Set.new
+
     end
 
     def preloader
