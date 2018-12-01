@@ -61,7 +61,13 @@ module ArLazyPreload
     end
 
     def association_loaded?(association_name)
-      records.all? { |record| record.association(association_name).loaded? }
+      records.all? do |record|
+        # It's fine to be nil
+        # No association exists, so it's "loaded"
+        next true if record.nil?
+
+        record.association(association_name).loaded?
+      end
     end
 
     def preloader
