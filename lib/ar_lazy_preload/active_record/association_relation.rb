@@ -6,19 +6,21 @@ module ArLazyPreload
   module AssociationRelation
     def initialize(*args)
       super(*args)
+      setup_preloading_context unless ArLazyPreload.config.auto_preload?
+    end
 
-      # lazy_preload_values is unnecessary when auto preload enabled
-      return if ArLazyPreload.config.auto_preload?
+    delegate :owner, :reflection, to: :proxy_association
+    delegate :lazy_preload_context, to: :owner
 
-      context = owner.lazy_preload_context
-      return if context.nil?
+    private
 
-      association_tree_builder = AssociationTreeBuilder.new(context.association_tree)
+    def setup_preloading_context
+      return if lazy_preload_context.nil?
+
+      association_tree_builder = AssociationTreeBuilder.new(lazy_preload_context.association_tree)
       subtree = association_tree_builder.subtree_for(reflection.name)
 
       lazy_preload!(subtree)
     end
-
-    delegate :owner, :reflection, to: :proxy_association
   end
 end

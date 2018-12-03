@@ -12,7 +12,7 @@ describe ArLazyPreload::AssociatedContextBuilder do
     expect(user_with_post.posts).not_to be_blank
     expect(user_with_post.account).not_to be_nil
 
-    parent_context = ArLazyPreload::Context.new(
+    parent_context = ArLazyPreload::Context.register(
       records: [user_with_post, user_without_posts],
       association_tree: [{ account: :account_history }]
     )
@@ -26,7 +26,7 @@ describe ArLazyPreload::AssociatedContextBuilder do
   end
 
   it "supports collection associations" do
-    parent_context = ArLazyPreload::Context.new(
+    parent_context = ArLazyPreload::Context.register(
       records: [user_with_post, user_without_posts],
       association_tree: [{ posts: :comments }]
     )
@@ -48,7 +48,7 @@ describe ArLazyPreload::AssociatedContextBuilder do
     records = [vote_for_post, vote_for_comment]
     records.each { |vote| expect(vote.voteable).not_to be_nil }
 
-    parent_context = ArLazyPreload::Context.new(
+    parent_context = ArLazyPreload::Context.register(
       records: records,
       association_tree: [voteable: :user]
     )
@@ -62,7 +62,7 @@ describe ArLazyPreload::AssociatedContextBuilder do
   end
 
   it "skips creating context when child association tree is blank" do
-    parent_context = ArLazyPreload::Context.new(
+    parent_context = ArLazyPreload::Context.register(
       records: [user_with_post, user_without_posts],
       association_tree: [:posts]
     )
@@ -78,7 +78,7 @@ describe ArLazyPreload::AssociatedContextBuilder do
   end
 
   it "skips creating context when list of associated records is blank" do
-    parent_context = ArLazyPreload::Context.new(
+    parent_context = ArLazyPreload::Context.register(
       records: [user_without_posts],
       association_tree: [{ posts: :comments }]
     )
