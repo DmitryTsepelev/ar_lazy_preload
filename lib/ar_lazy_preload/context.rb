@@ -11,9 +11,9 @@ module ArLazyPreload
       return if records.empty?
 
       if ArLazyPreload.config.auto_preload?
-        ArLazyPreload::Contexts::AutoPreloadContext.new(records: records)
+        Contexts::AutoPreloadContext.new(records: records)
       elsif association_tree.any?
-        ArLazyPreload::Contexts::LazyPreloadContext.new(
+        Contexts::LazyPreloadContext.new(
           records: records,
           association_tree: association_tree
         )

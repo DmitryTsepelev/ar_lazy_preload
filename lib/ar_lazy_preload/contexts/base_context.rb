@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "set"
 require "ar_lazy_preload/associated_context_builder"
 
 module ArLazyPreload
@@ -23,8 +24,7 @@ module ArLazyPreload
         return if association_loaded?(association_name) ||
                   !association_needs_preload?(association_name)
 
-        preloader.preload(records, association_name)
-        AssociatedContextBuilder.prepare(parent_context: self, association_name: association_name)
+        perform_preloading(association_name)
       end
 
       protected
@@ -35,8 +35,22 @@ module ArLazyPreload
 
       private
 
+      def perform_preloading(association_name)
+        preloader.preload(records, association_name)
+        loaded_association_names.add(association_name)
+
+        AssociatedContextBuilder.prepare(
+          parent_context: self,
+          association_name: association_name
+        )
+      end
+
       def association_loaded?(association_name)
-        records.all? { |record| record.association(association_name).loaded? }
+        loaded_association_names.include?(association_name)
+      end
+
+      def loaded_association_names
+        @loaded_association_names ||= Set.new
       end
 
       def preloader
