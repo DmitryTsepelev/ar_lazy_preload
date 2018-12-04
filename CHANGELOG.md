@@ -2,6 +2,12 @@
 
 ## master
 
+## 0.2.6 (2018-12-04)
+
+- [PR [#20](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/20)] Cleanup context and active record patches ([@DmitryTsepelev][])
+- [PR [#17](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/17)] Cleanup and simplify code ([@DmitryTsepelev][])
+- [PR [#16](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/16)] Improve benchmark & performance  ([@PikachuEXE][])
+
 ## 0.2.5 (2018-11-29)
 
 - [PR [#15](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/15)] Fix performance issue with benchmark ([@PikachuEXE][])
