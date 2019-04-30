@@ -1,9 +1,8 @@
-# Send builds to container-based infrastructure
-# http://docs.travis-ci.com/user/workers/container-based-infrastructure/
-sudo: false
 language: ruby
-cache:
-- bundler
+cache: bundler
+
+sudo: false
+
 rvm:
   - 2.3
   - 2.4
@@ -15,6 +14,7 @@ gemfile:
   - gemfiles/rails_5_0.gemfile
   - gemfiles/rails_5_1.gemfile
   - gemfiles/rails_5_2.gemfile
+  - gemfiles/rails_6_0.gemfile
   - gemfiles/railsmaster.gemfile
 
 notifications:
@@ -27,5 +27,17 @@ matrix:
       gemfile: gemfiles/railsmaster.gemfile
     - rvm: 2.4
       gemfile: gemfiles/railsmaster.gemfile
+    - rvm: 2.3
+      gemfile: gemfiles/rails_6_0.gemfile
+    - rvm: 2.4
+      gemfile: gemfiles/rails_6_0.gemfile
   allow_failures:
     - rvm: ruby-head
+
+before_install:
+  - ls /home/travis/.rvm/gems/
+  - rm /home/travis/.rvm/gems/ruby-2.4.6@global/specifications/bundler-2.0.1.gemspec || true
+  - rm /home/travis/.rvm/gems/ruby-2.5.5@global/specifications/bundler-2.0.1.gemspec || true
+  - gem uninstall bundler || true
+  - gem install bundler -v '1.17.3'
+  - bundler --version
