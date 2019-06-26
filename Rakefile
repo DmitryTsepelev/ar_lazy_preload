@@ -13,3 +13,13 @@ if !ENV["APPRAISAL_INITIALIZED"] && !ENV["TRAVIS"]
 else
   task default: [:rubocop, :spec]
 end
+
+task :bench do
+  cmd = %w[bundle exec ruby benchmark/main.rb]
+  exit system(*cmd)
+end
+
+task :memory do
+  cmd = %w[bundle exec ruby benchmark/memory.rb]
+  exit system(*cmd)
+end

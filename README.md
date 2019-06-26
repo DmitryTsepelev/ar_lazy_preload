@@ -63,5 +63,8 @@ ArLazyPreload.config.auto_preload = true
 
 After that there is no need to call `lazy_preload` on the association, everything would be loaded lazily.
 
+> Worried about the performance? Take a look at [benchmarks](https://travis-ci.org/DmitryTsepelev/ar_lazy_preload) (`TASK=bench` and `TASK=memory`)
+
 ## License
+
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

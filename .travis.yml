@@ -3,36 +3,69 @@ cache: bundler
 
 sudo: false
 
+script:
+  - "RUBYOPT='-w' bundle exec rake $TASK"
+
 rvm:
   - 2.3
   - 2.4
   - 2.5
   - 2.6
   - ruby-head
+
 gemfile:
   - gemfiles/rails_4_2.gemfile
-  - gemfiles/rails_5_0.gemfile
-  - gemfiles/rails_5_1.gemfile
   - gemfiles/rails_5_2.gemfile
   - gemfiles/rails_6_0.gemfile
   - gemfiles/railsmaster.gemfile
 
-notifications:
-  email: false
+env:
+  - TASK=spec
+  - TASK=bench
+  - TASK=memory
 
 matrix:
   fast_finish: true
   exclude:
     - rvm: 2.3
-      gemfile: gemfiles/railsmaster.gemfile
+      env: TASK=bench
     - rvm: 2.4
-      gemfile: gemfiles/railsmaster.gemfile
+      env: TASK=bench
+    - rvm: 2.5
+      env: TASK=bench
+    - rvm: ruby-head
+      env: TASK=bench
+
+    - rvm: 2.3
+      env: TASK=memory
+    - rvm: 2.4
+      env: TASK=memory
+    - rvm: 2.5
+      env: TASK=memory
+    - rvm: ruby-head
+      env: TASK=memory
+
     - rvm: 2.3
       gemfile: gemfiles/rails_6_0.gemfile
+    - rvm: 2.3
+      gemfile: gemfiles/railsmaster.gemfile
+
     - rvm: 2.4
       gemfile: gemfiles/rails_6_0.gemfile
+    - rvm: 2.4
+      gemfile: gemfiles/railsmaster.gemfile
+
+  include:
+    - rvm: 2.6
+      gemfile: gemfiles/rails_5_0.gemfile
+    - rvm: 2.6
+      gemfile: gemfiles/rails_5_1.gemfile
+
   allow_failures:
     - rvm: ruby-head
+
+notifications:
+  email: false
 
 before_install:
   - ls /home/travis/.rvm/gems/
