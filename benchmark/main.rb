@@ -1,187 +1,55 @@
 # frozen_string_literal: true
 
-$:.push File.expand_path("lib", __dir__)
+require_relative "./base_bench"
 
-require "benchmark"
+class Bench < BaseBench
+  def run
+    setup_data
 
-ENV["RAILS_ENV"] = "test"
+    Benchmark.bm(50) do |x|
+      run_bench(x, usage_percent: 100)
+      run_bench(x, usage_percent: 50)
+      run_bench(x, usage_percent: 10)
+      run_bench(x, usage_percent: 0)
 
-require_relative "./../spec/dummy/config/environment"
+      run_bench(x, usage_percent: 100, auto_preload: false)
+      run_bench(x, usage_percent: 50, auto_preload: false)
+      run_bench(x, usage_percent: 10, auto_preload: false)
+      run_bench(x, usage_percent: 0, auto_preload: false)
 
-require "active_record"
-require "ar_lazy_preload"
-
-ActiveRecord::Base.establish_connection(
-  adapter: "sqlite3",
-  database: ":memory:"
-)
-
-require_relative "./../spec/helpers/schema"
-require_relative "./../spec/helpers/models"
-
-# From https://stackoverflow.com/a/20640938/838346
-def without_gc
-  GC.start # start out clean
-  GC.disable
-  yield
-  GC.enable
-end
-
-# Setup data
-10.times do
-  user_1 = User.create!
-  user_2 = User.create!
-  100.times do
-    post_1 = Post.create!(user: user_1)
-    post_2 = Post.create!(user: user_2)
-
-    10.times do
-      Comment.create!(post: post_1, user: user_2)
-      Comment.create!(post: post_2, user: user_1)
+      run_bench(x, usage_percent: 100, auto_preload: true)
+      run_bench(x, usage_percent: 50, auto_preload: true)
+      run_bench(x, usage_percent: 10, auto_preload: true)
+      run_bench(x, usage_percent: 0, auto_preload: true)
     end
   end
-end
 
-Benchmark.bm(50) do |x|
-  without_gc do
-    x.report("AR eager loading w/ 100% usage: ") do
-      ::User.all.includes(posts: :comments).map do |user|
-        user.posts.to_a.each do |post|
-          post.comments.to_a.each {|c| c.id}
+  private
+
+  def run_bench(x, usage_percent:, auto_preload: nil)
+    label =
+      case auto_preload
+      when nil then "AR eager loading"
+      when false then "AR lazy preloading w/o auto_preload"
+      when true then "AR lazy preloading w/ auto_preload"
+      end
+
+    without_gc do
+      ArLazyPreload.config.auto_preload = auto_preload unless auto_preload.nil?
+
+      scope = auto_preload ? User.all : ::User.all.includes(posts: :comments)
+
+      x.report("#{label} #{usage_percent}% usage: ") do
+        scope.map do |user|
+          if usage_percent.zero?
+            user.id
+          elsif (user.id % (100 / usage_percent)).zero?
+            user.posts.each { |post| post.comments.each(&:id) }
+          end
         end
-      end
-    end
-  end
-
-  without_gc do
-    x.report("AR eager loading w/ 50% usage: ") do
-      ::User.all.includes(posts: :comments).map do |user|
-        next nil if user.id.odd?
-
-        user.posts.to_a.each do |post|
-          post.comments.to_a.each {|c| c.id}
-        end
-      end
-    end
-  end
-
-  without_gc do
-    x.report("AR eager loading w/ 10% usage: ") do
-      ::User.all.includes(posts: :comments).map do |user|
-        next nil if (user.id % 10).positive?
-
-        user.posts.to_a.each do |post|
-          post.comments.to_a.each {|c| c.id}
-        end
-      end
-    end
-  end
-
-  without_gc do
-    x.report("AR eager loading w/ 0% usage: ") do
-      ::User.all.includes(posts: :comments).map do |user|
-        user.id
-      end
-    end
-  end
-
-  without_gc do
-    x.report("AR lazy preloading w/o auto_preload w/ 100% usage: ") do
-      ArLazyPreload.config.auto_preload = false
-
-      ::User.all.lazy_preload(posts: :comments).map do |user|
-        user.posts.to_a.each do |post|
-          post.comments.to_a.each {|c| c.id}
-        end
-      end
-    end
-  end
-
-  without_gc do
-    x.report("AR lazy preloading w/o auto_preload w/ 50% usage: ") do
-      ArLazyPreload.config.auto_preload = false
-
-      ::User.all.lazy_preload(posts: :comments).map do |user|
-        next nil if user.id.odd?
-
-        user.posts.to_a.each do |post|
-          post.comments.to_a.each {|c| c.id}
-        end
-      end
-    end
-  end
-
-  without_gc do
-    x.report("AR lazy preloading w/o auto_preload w/ 10% usage: ") do
-      ArLazyPreload.config.auto_preload = false
-
-      ::User.all.lazy_preload(posts: :comments).map do |user|
-        next nil if (user.id % 10).positive?
-
-        user.posts.to_a.each do |post|
-          post.comments.to_a.each {|c| c.id}
-        end
-      end
-    end
-  end
-
-  without_gc do
-    x.report("AR lazy preloading w/o auto_preload w/ 0% usage: ") do
-      ArLazyPreload.config.auto_preload = false
-
-      ::User.all.lazy_preload(posts: :comments).map do |user|
-        user.id
-      end
-    end
-  end
-
-  without_gc do
-    x.report("AR lazy preloading w/ auto_preload w/ 100% usage: ") do
-      ArLazyPreload.config.auto_preload = true
-
-      ::User.all.map do |user|
-        user.posts.to_a.each do |post|
-          post.comments.to_a.each {|c| c.id}
-        end
-      end
-    end
-  end
-
-  without_gc do
-    x.report("AR lazy preloading w/ auto_preload w/ 50% usage: ") do
-      ArLazyPreload.config.auto_preload = true
-
-      ::User.all.map do |user|
-        next nil if user.id.odd?
-
-        user.posts.to_a.each do |post|
-          post.comments.to_a.each {|c| c.id}
-        end
-      end
-    end
-  end
-
-  without_gc do
-    x.report("AR lazy preloading w/ auto_preload w/ 10% usage: ") do
-      ArLazyPreload.config.auto_preload = true
-
-      ::User.all.map do |user|
-        next nil if (user.id % 10).positive?
-
-        user.posts.to_a.each do |post|
-          post.comments.to_a.each {|c| c.id}
-        end
-      end
-    end
-  end
-
-  without_gc do
-    x.report("AR lazy preloading w/ auto_preload w/ 0% usage: ") do
-      ArLazyPreload.config.auto_preload = true
-
-      ::User.all.map do |user|
-        user.id
       end
     end
   end
 end
+
+Bench.new.run
