@@ -1,17 +1,48 @@
-[![Cult Of Martians](http://cultofmartians.com/assets/badges/badge.svg)](https://cultofmartians.com/tasks/activerecord-lazy-preload.html)
-[![Gem Version](https://badge.fury.io/rb/ar_lazy_preload.svg)](https://rubygems.org/gems/ar_lazy_preload)
-[![Build Status](https://travis-ci.org/DmitryTsepelev/ar_lazy_preload.svg?branch=master)](https://travis-ci.org/DmitryTsepelev/ar_lazy_preload)
-[![Maintainability](https://api.codeclimate.com/v1/badges/00d04595661820dfba80/maintainability)](https://codeclimate.com/github/DmitryTsepelev/ar_lazy_preload/maintainability)
-[![Coverage Status](https://coveralls.io/repos/github/DmitryTsepelev/ar_lazy_preload/badge.svg?branch=master)](https://coveralls.io/github/DmitryTsepelev/ar_lazy_preload?branch=master)
+# ArLazyPreload [![Cult Of Martians](http://cultofmartians.com/assets/badges/badge.svg)](https://cultofmartians.com/tasks/activerecord-lazy-preload.html) [![Gem Version](https://badge.fury.io/rb/ar_lazy_preload.svg)](https://rubygems.org/gems/ar_lazy_preload) [![Build Status](https://travis-ci.org/DmitryTsepelev/ar_lazy_preload.svg?branch=master)](https://travis-ci.org/DmitryTsepelev/ar_lazy_preload) [![Maintainability](https://api.codeclimate.com/v1/badges/00d04595661820dfba80/maintainability)](https://codeclimate.com/github/DmitryTsepelev/ar_lazy_preload/maintainability) [![Coverage Status](https://coveralls.io/repos/github/DmitryTsepelev/ar_lazy_preload/badge.svg?branch=master)](https://coveralls.io/github/DmitryTsepelev/ar_lazy_preload?branch=master)
 
-# ArLazyPreload
+**ArLazyPreload** is a gem that brings association lazy load functionality to your Rails applications. There is a number of built-in methods to solve [N+1 problem](https://guides.rubyonrails.org/active_record_querying.html#eager-loading-associations), but sometimes a list of associations to preload is not obvious–this is when you can get most of this gem.
 
-<a href="https://evilmartians.com/?utm_source=ar_lazy_preload">
-<img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54"></a>
+- **Simple**. The only thing you need to change is to use `#lazy_preload` instead of `#includes`, `#eager_load` or `#preload`
+- **Fast**. Take a look at [benchmarks](https://travis-ci.org/DmitryTsepelev/ar_lazy_preload) (`TASK=bench` and `TASK=memory`)
+- **Perfect fit for GraphQL**. Define a list of associations to load at the top-level resolver and let the gem do its job
+- **Auto-preload support**. If you don't want to specify the association list–set `ArLazyPreload.config.auto_preload` to `true`
 
-Lazy loading associations for the ActiveRecord models. `#includes`, `#eager_load` and `#preload` are built-in methods to avoid N+1 problem, but sometimes when DB request is made we don't know what associations we are going to need later (for instance when your API allows client to define a list of loaded associations dynamically). The only possible solution for such cases is to load _all_ the associations we might need, but it can be a huge overhead.
+<p align="center">
+  <a href="https://evilmartians.com/?utm_source=ar_lazy_preload">
+    <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54">
+  </a>
+</p>
 
-This gem allows to set up _lazy_ preloading for associations - it won't load anything until association is called for a first time, but when it happens - it loads all the associated records for all records from the initial relation in a single query.
+## Why should I use it?
+
+Lazy loading is super helpful when the list of associations to load is determined dynamically. For instance, in GraphQL this list comes from the API client, and you'll have to inspect the selection set to find out what associations are going to be used.
+
+This gem uses a different approach: it won't load anything until the association is called for a first time. When it happens–it loads all the associated records for all records from the initial relation in a single query.
+
+## Usage
+
+Let's try `#lazy_preload` in action! The following code will perform a single SQL request (because we've never accessed posts):
+
+```ruby
+users = User.lazy_preload(:posts).limit(10)  # => SELECT * FROM users LIMIT 10
+users.map(&:first_name)
+```
+
+However, when we try to load posts, there will be one more request for posts:
+
+```ruby
+users.map(&:posts) # => SELECT * FROM posts WHERE user_id in (...)
+```
+
+## Auto preloading
+
+If you want the gem to be even lazier–you can configure it to load all the associations lazily without specifying them explicitly. To do that you'll need to change the configuration in the following way:
+
+```ruby
+ArLazyPreload.config.auto_preload = true
+```
+
+After that there is no need to call `#lazy_preload` on the association, everything would be loaded lazily.
 
 ## Installation
 
@@ -20,50 +51,6 @@ Add this line to your application's Gemfile, and you're all set:
 ```ruby
 gem "ar_lazy_preload"
 ```
-
-## Usage
-
-For example, if we define the following relation
-
-```ruby
-users = User.lazy_preload(:posts).limit(10)
-```
-
-and use it in the following way
-
-```ruby
-users.map(&:first_name)
-```
-
-there will be one query because we've never accessed posts:
-
-```sql
-SELECT * FROM users LIMIT 10
-```
-
-However, when we try to load posts
-
-```ruby
-users.map(&:posts)
-```
-
-there will be one more request for posts:
-
-```sql
-SELECT * FROM posts WHERE user_id in (...)
-```
-
-## Auto preloading
-
-If you want the gem to be even more lazy - you can configure it to load all the associations lazily without specifying them explicitly. In order to do that you'll need to change the configuration in the following way:
-
-```ruby
-ArLazyPreload.config.auto_preload = true
-```
-
-After that there is no need to call `lazy_preload` on the association, everything would be loaded lazily.
-
-> Worried about the performance? Take a look at [benchmarks](https://travis-ci.org/DmitryTsepelev/ar_lazy_preload) (`TASK=bench` and `TASK=memory`)
 
 ## License
 
