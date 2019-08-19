@@ -21,7 +21,7 @@ appraise "rails_5_2" do
 end
 
 appraise "rails_6_0" do
-  gem "rails", "~> 6.0.0.rc1"
+  gem "rails", "~> 6.0.0"
   gem "sqlite3", "~> 1.4.0"
 end
 

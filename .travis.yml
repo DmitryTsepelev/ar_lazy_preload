@@ -66,11 +66,3 @@ matrix:
 
 notifications:
   email: false
-
-before_install:
-  - ls /home/travis/.rvm/gems/
-  - rm /home/travis/.rvm/gems/ruby-2.4.6@global/specifications/bundler-2.0.1.gemspec || true
-  - rm /home/travis/.rvm/gems/ruby-2.5.5@global/specifications/bundler-2.0.1.gemspec || true
-  - gem uninstall bundler || true
-  - gem install bundler -v '1.17.3'
-  - bundler --version
