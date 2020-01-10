@@ -11,6 +11,7 @@ rvm:
   - 2.4
   - 2.5
   - 2.6
+  - 2.7
   - ruby-head
 
 gemfile:
@@ -66,6 +67,9 @@ matrix:
       gemfile: gemfiles/rails_6_0.gemfile
     - rvm: 2.4
       gemfile: gemfiles/railsmaster.gemfile
+
+    - rvm: 2.7
+      gemfile: gemfiles/rails_4_2.gemfile
 
   include:
     - rvm: 2.6
