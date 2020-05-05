@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.2.7 (2020-05-05)
+
+- [PR [#28](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/28)] Improve compatibility with ActiveRecord API for singular associations  ([@sandersiim][])
+
 ## 0.2.6 (2018-12-04)
 
 - [PR [#20](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/20)] Cleanup context and active record patches ([@DmitryTsepelev][])
@@ -42,3 +46,4 @@
 [@DmitryTsepelev]: https://github.com/DmitryTsepelev
 [@palkan]: https://github.com/palkan
 [@PikachuEXE]: https://github.com/PikachuEXE
+[@sandersiim]: https://github.com/sandersiim
