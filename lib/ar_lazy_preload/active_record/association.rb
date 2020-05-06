@@ -8,7 +8,8 @@ module ArLazyPreload
       super
     end
 
-    def ids_reader # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/AbcSize
+    def ids_reader
       return super if owner.lazy_preload_context.blank?
 
       primary_key = reflection.association_primary_key.to_sym
@@ -20,5 +21,6 @@ module ArLazyPreload
         @association_ids ||= reader.map(&primary_key)
       end
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end
