@@ -42,6 +42,10 @@ describe ArLazyPreload do
     it "loads lazy_preloaded association" do
       expect { subject.each { |u| u.posts.map(&:id) } }.to make_database_queries(count: 2)
     end
+
+    it "loads lazy_preloaded association with collection_singular_ids" do
+      expect { subject.map(&:post_ids) }.to make_database_queries(count: 2)
+    end
   end
 
   describe "has_many through" do
@@ -55,6 +59,12 @@ describe ArLazyPreload do
     it "loads lazy_preloaded association" do
       expect do
         subject.each { |u| u.comments_on_posts.map(&:id) }
+      end.to make_database_queries(count: 3)
+    end
+
+    it "loads lazy_preloaded association with collection_singular_ids" do
+      expect do
+        subject.map(&:comments_on_post_ids)
       end.to make_database_queries(count: 3)
     end
 
@@ -115,6 +125,12 @@ describe ArLazyPreload do
       end.to make_database_queries(count: 3)
     end
 
+    it "loads lazy_preloaded association with collection_singular_ids" do
+      expect do
+        subject.map(&:mentioned_user_ids)
+      end.to make_database_queries(count: 3)
+    end
+
     # SELECT "comments".* FROM "comments"
     # SELECT "user_mentions".* FROM "user_mentions" WHERE "user_mentions"."comment_id" IN (...)
     # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
@@ -122,6 +138,12 @@ describe ArLazyPreload do
     it "loads embedded lazy_preloaded association" do
       expect do
         subject.each { |comment| comment.mentioned_users.map { |u| u.posts.map(&:id) } }
+      end.to make_database_queries(count: 4)
+    end
+
+    it "loads embedded lazy_preloaded association with collection_singular_ids" do
+      expect do
+        subject.each { |comment| comment.mentioned_users.map(&:post_ids) }
       end.to make_database_queries(count: 4)
     end
   end
@@ -140,6 +162,12 @@ describe ArLazyPreload do
       end.to make_database_queries(count: 3)
     end
 
+    it "loads lazy_preloaded association with collection_singular_ids" do
+      expect do
+        subject.each { |comment| comment.user.post_ids }
+      end.to make_database_queries(count: 3)
+    end
+
     # SELECT "comments".* FROM "comments"
     # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
     # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
@@ -148,6 +176,14 @@ describe ArLazyPreload do
       expect do
         subject.map do |comment|
           comment.user.posts.map { |p| p.comments.map(&:id) }
+        end
+      end.to make_database_queries(count: 4)
+    end
+
+    it "loads embedded lazy_preloaded association with collection_singular_ids" do
+      expect do
+        subject.map do |comment|
+          comment.user.posts.map(&:comment_ids)
         end
       end.to make_database_queries(count: 4)
     end
@@ -185,6 +221,12 @@ describe ArLazyPreload do
     it "loads lazy_preloaded association" do
       expect do
         subject.map { |comment| comment.replies.map(&:id) }
+      end.to make_database_queries(count: 2)
+    end
+
+    it "loads lazy_preloaded association with collection_singular_ids" do
+      expect do
+        subject.map(&:reply_ids)
       end.to make_database_queries(count: 2)
     end
   end
