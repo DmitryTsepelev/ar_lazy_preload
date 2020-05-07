@@ -49,3 +49,4 @@
 [@palkan]: https://github.com/palkan
 [@PikachuEXE]: https://github.com/PikachuEXE
 [@sandersiim]: https://github.com/sandersiim
+[@zeitnot]: https://github.com/zeitnot
