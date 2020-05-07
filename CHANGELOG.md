@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR [#29](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/29)] Fix N+1 problem for `collection_ids` (aka collection_singular_ids) ([@zeitnot][])
+
 ## 0.2.6 (2018-12-04)
 
 - [PR [#20](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/20)] Cleanup context and active record patches ([@DmitryTsepelev][])
