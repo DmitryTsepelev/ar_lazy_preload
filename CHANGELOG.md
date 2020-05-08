@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.3.0 (2020-05-08)
+
 - [PR [#29](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/29)] Fix N+1 problem for `collection_ids` (aka collection_singular_ids) ([@zeitnot][])
 
 ## 0.2.7 (2020-05-05)
