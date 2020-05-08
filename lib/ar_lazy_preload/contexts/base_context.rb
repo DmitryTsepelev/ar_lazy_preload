@@ -15,6 +15,7 @@ module ArLazyPreload
       def initialize(records:)
         @records = records.dup
         @records.compact!
+        @records.uniq!
         @records.each { |record| record.lazy_preload_context = self }
       end
 

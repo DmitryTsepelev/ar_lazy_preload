@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR [#29](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/29)] Fix N+1 problem for `collection_ids` (aka collection_singular_ids) ([@zeitnot][])
+
 ## 0.2.7 (2020-05-05)
 
 - [PR [#28](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/28)] Improve compatibility with ActiveRecord API for singular associations  ([@sandersiim][])
@@ -47,3 +49,4 @@
 [@palkan]: https://github.com/palkan
 [@PikachuEXE]: https://github.com/PikachuEXE
 [@sandersiim]: https://github.com/sandersiim
+[@zeitnot]: https://github.com/zeitnot
