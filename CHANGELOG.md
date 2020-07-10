@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.3.1 (2020-07-10)
+
+- [PR [#33](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/33)] Don't do merge if there is nothing to merge ([@Earendil95][])
+
 ## 0.3.0 (2020-05-08)
 
 - [PR [#29](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/29)] Fix N+1 problem for `collection_ids` (aka collection_singular_ids) ([@zeitnot][])
@@ -52,3 +56,4 @@
 [@PikachuEXE]: https://github.com/PikachuEXE
 [@sandersiim]: https://github.com/sandersiim
 [@zeitnot]: https://github.com/zeitnot
+[@Earendil95]: https://github.com/Earendil95
