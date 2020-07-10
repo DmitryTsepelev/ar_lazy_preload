@@ -8,7 +8,7 @@ module ArLazyPreload
     def merge
       result = super
 
-      if other.lazy_preload_values
+      if other.lazy_preload_values.any?
         if other.klass == relation.klass
           merge_lazy_preloads
         else
