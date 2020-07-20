@@ -33,8 +33,8 @@ describe "ArLazyPreload.skip_preload" do
 
     it "loads excluded association" do
       subject.load.last.skip_preload.posts.to_a
-      id_concat = subject[0..-2].map(&:id).join(', ')
-      question_concat = (['?'] * (subject.size - 1)).join(', ')
+      id_concat = subject[0..-2].map(&:id).join(", ")
+      question_concat = (["?"] * (subject.size - 1)).join(", ")
       expect do
         subject.first.posts.to_a
       end.to make_database_queries(
