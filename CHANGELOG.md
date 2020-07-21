@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.3.2 (2020-07-21)
+
 - [PR [#33](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/34)] Feature skip_preload, allow turn automatic preload off ([@OuYangJinTing][])
 
 ## 0.3.1 (2020-07-10)
@@ -59,3 +61,4 @@
 [@sandersiim]: https://github.com/sandersiim
 [@zeitnot]: https://github.com/zeitnot
 [@Earendil95]: https://github.com/Earendil95
+[@OuYangJinTing]: https://github.com/OuYangJinTing
