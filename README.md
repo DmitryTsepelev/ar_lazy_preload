@@ -44,6 +44,12 @@ ArLazyPreload.config.auto_preload = true
 
 After that there is no need to call `#lazy_preload` on the association, everything would be loaded lazily.
 
+If you want to turn automatic preload off for a specific record, you can call `.skip_preload` before any associations method:
+
+```ruby
+users.first.skip_preload.posts # => SELECT * FROM posts WHERE user_id = ?
+```
+
 ## Installation
 
 Add this line to your application's Gemfile, and you're all set:

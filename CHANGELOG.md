@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR [#33](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/34)] Feature skip_preload, allow turn automatic preload off ([@OuYangJinTing][])
+
 ## 0.3.1 (2020-07-10)
 
 - [PR [#33](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/33)] Don't do merge if there is nothing to merge ([@Earendil95][])

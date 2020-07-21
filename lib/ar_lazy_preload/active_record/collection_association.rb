@@ -3,7 +3,7 @@
 module ArLazyPreload
   # ActiveRecord::CollectionAssociation patch with a hook for lazy preloading
   module CollectionAssociation
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def ids_reader
       return super if owner.lazy_preload_context.blank?
 
@@ -16,6 +16,6 @@ module ArLazyPreload
         @association_ids ||= reader.map(&primary_key)
       end
     end
-    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
   end
 end
