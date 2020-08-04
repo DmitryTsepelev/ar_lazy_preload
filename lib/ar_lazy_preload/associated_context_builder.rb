@@ -8,8 +8,8 @@ module ArLazyPreload
   # the associated records based on the parent association tree.
   class AssociatedContextBuilder
     # Initiates lazy preload context the records loaded lazily
-    def self.prepare(*args)
-      new(*args).perform
+    def self.prepare(**args)
+      new(**args).perform
     end
 
     attr_reader :parent_context, :association_name
