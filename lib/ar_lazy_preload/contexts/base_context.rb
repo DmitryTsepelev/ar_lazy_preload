@@ -34,6 +34,10 @@ module ArLazyPreload
         raise NotImplementedError
       end
 
+      def auto_preload
+        false
+      end
+
       private
 
       def perform_preloading(association_name)
@@ -42,7 +46,8 @@ module ArLazyPreload
 
         AssociatedContextBuilder.prepare(
           parent_context: self,
-          association_name: association_name
+          association_name: association_name,
+          auto_preload: auto_preload
         )
       end
 

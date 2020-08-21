@@ -13,10 +13,35 @@ module ArLazyPreload
       if need_context
         Context.register(
           records: ar_lazy_preload_records,
-          association_tree: lazy_preload_values
+          association_tree: lazy_preload_values,
+          auto_preload: lazy_auto_preload_setting
         )
       end
       result
+    end
+
+    # Lazily autoloads all association
+    # example:
+    #
+    #   users = User.lazy_auto_preload
+    #   users.each do |user|
+    #     user.posts.flat_map {|post| post.comments.map(&:id)}
+    #   end
+    #
+    # Same effect can be achieved by User.lazy_preload(posts: :comments)
+    def lazy_auto_preload
+      spawn.lazy_auto_preload!
+    end
+
+    def lazy_auto_preload!
+      self.lazy_auto_preload_setting = true
+      self
+    end
+
+    def lazy_auto_preload_setting
+      return @lazy_auto_preload_setting if defined? @lazy_auto_preload_setting
+
+      @lazy_auto_preload_setting = false
     end
 
     # Specify relationships to be loaded lazily when association is loaded for the first time. For
@@ -56,6 +81,6 @@ module ArLazyPreload
       @records
     end
 
-    attr_writer :lazy_preload_values
+    attr_writer :lazy_preload_values, :lazy_auto_preload_setting
   end
 end

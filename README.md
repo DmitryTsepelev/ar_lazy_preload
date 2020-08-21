@@ -50,6 +50,16 @@ If you want to turn automatic preload off for a specific record, you can call `.
 users.first.skip_preload.posts # => SELECT * FROM posts WHERE user_id = ?
 ```
 
+### Relation auto preloading
+
+Another alternative for auto preloading is using relation `#lazy_auto_preload` method
+
+```ruby
+posts = User.lazy_auto_preload.flat_map(&:posts)
+# => SELECT * FROM users LIMIT 10
+# => SELECT * FROM posts WHERE user_id in (...)
+```
+
 ## Installation
 
 Add this line to your application's Gemfile, and you're all set:

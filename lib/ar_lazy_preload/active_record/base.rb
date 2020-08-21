@@ -5,6 +5,7 @@ module ArLazyPreload
   module Base
     def self.included(base)
       base.class.delegate :lazy_preload, to: :all
+      base.class.delegate :lazy_auto_preload, to: :all
     end
 
     attr_accessor :lazy_preload_context

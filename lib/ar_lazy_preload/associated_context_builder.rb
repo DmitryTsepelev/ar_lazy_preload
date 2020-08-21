@@ -12,18 +12,19 @@ module ArLazyPreload
       new(*args).perform
     end
 
-    attr_reader :parent_context, :association_name
+    attr_reader :parent_context, :association_name, :auto_preload
 
     # :parent_context - root context
     # :association_name - lazily preloaded association name
-    def initialize(parent_context:, association_name:)
+    def initialize(parent_context:, association_name:, auto_preload: false)
       @parent_context = parent_context
       @association_name = association_name
+      @auto_preload = auto_preload
     end
 
     # Takes all the associated records for the records, attached to the :parent_context and creates
     # a preloading context for them
-    def perform
+    def perform # rubocop:disable Metrics/MethodLength
       associated_records = parent_context.records.flat_map do |record|
         next if record.nil?
 
@@ -32,14 +33,18 @@ module ArLazyPreload
         reflection.collection? ? record_association.target : record_association.reader
       end
 
-      Context.register(records: associated_records, association_tree: child_association_tree)
+      Context.register(
+        records: associated_records,
+        association_tree: child_association_tree,
+        auto_preload: auto_preload
+      )
     end
 
     private
 
     def child_association_tree
       # `association_tree` is unnecessary when auto preload is enabled
-      return nil if ArLazyPreload.config.auto_preload?
+      return nil if auto_preload
 
       AssociationTreeBuilder.new(parent_context.association_tree).subtree_for(association_name)
     end
