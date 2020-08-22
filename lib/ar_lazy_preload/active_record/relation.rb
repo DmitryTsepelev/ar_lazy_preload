@@ -5,6 +5,8 @@ require "ar_lazy_preload/context"
 module ArLazyPreload
   # ActiveRecord::Relation patch with lazy preloading support
   module Relation
+    attr_writer :preload_associations_lazily_setting
+
     # Enhanced #load method will check if association has not been loaded yet and add a context
     # for lazy preloading to loaded each record
     def load
@@ -14,7 +16,7 @@ module ArLazyPreload
         Context.register(
           records: ar_lazy_preload_records,
           association_tree: lazy_preload_values,
-          auto_preload: lazy_auto_preload_setting
+          auto_preload: preload_associations_lazily_setting
         )
       end
       result
@@ -23,25 +25,18 @@ module ArLazyPreload
     # Lazily autoloads all association
     # example:
     #
-    #   users = User.lazy_auto_preload
+    #   users = User.preload_associations_lazily
     #   users.each do |user|
     #     user.posts.flat_map {|post| post.comments.map(&:id)}
     #   end
     #
     # Same effect can be achieved by User.lazy_preload(posts: :comments)
-    def lazy_auto_preload
-      spawn.lazy_auto_preload!
+    def preload_associations_lazily
+      spawn.tap { |relation| relation.preload_associations_lazily_setting = true }
     end
 
-    def lazy_auto_preload!
-      self.lazy_auto_preload_setting = true
-      self
-    end
-
-    def lazy_auto_preload_setting
-      return @lazy_auto_preload_setting if defined? @lazy_auto_preload_setting
-
-      @lazy_auto_preload_setting = false
+    def preload_associations_lazily_setting
+      @preload_associations_lazily_setting ||= false
     end
 
     # Specify relationships to be loaded lazily when association is loaded for the first time. For
@@ -81,6 +76,6 @@ module ArLazyPreload
       @records
     end
 
-    attr_writer :lazy_preload_values, :lazy_auto_preload_setting
+    attr_writer :lazy_preload_values
   end
 end

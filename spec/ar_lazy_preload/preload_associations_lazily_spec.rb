@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-describe "ActiveRecord::Relation.lazy_auto_preload" do
+describe "ActiveRecord::Relation.preload_associations_lazily" do
   let!(:user1) { create(:user) }
   let!(:user2) { create(:user) }
 
@@ -11,7 +11,7 @@ describe "ActiveRecord::Relation.lazy_auto_preload" do
   let!(:comment1) { create(:comment, user: user2, post: post) }
 
   describe "auto preloading" do
-    subject { Comment.lazy_auto_preload }
+    subject { Comment.preload_associations_lazily }
 
     # SELECT "comments".* FROM "comments"
     # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)

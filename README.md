@@ -52,10 +52,10 @@ users.first.skip_preload.posts # => SELECT * FROM posts WHERE user_id = ?
 
 ### Relation auto preloading
 
-Another alternative for auto preloading is using relation `#lazy_auto_preload` method
+Another alternative for auto preloading is using relation `#preload_associations_lazily` method
 
 ```ruby
-posts = User.lazy_auto_preload.flat_map(&:posts)
+posts = User.preload_associations_lazily.flat_map(&:posts)
 # => SELECT * FROM users LIMIT 10
 # => SELECT * FROM posts WHERE user_id in (...)
 ```
