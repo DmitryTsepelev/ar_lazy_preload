@@ -28,11 +28,16 @@ module ArLazyPreload
         perform_preloading(association_name)
       end
 
+      def auto_preload?
+        false
+      end
+
       protected
 
       def association_needs_preload?(_association_name)
         raise NotImplementedError
       end
+
 
       private
 
