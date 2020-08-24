@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.4.0 (2020-08-24)
+
 - [PR [#36](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/36)] Feature preload_associations_lazily, allow turn on automatic preload only for given ActiveRecord::Relation ([@mpospelov][])
 
 ## 0.3.2 (2020-07-21)
