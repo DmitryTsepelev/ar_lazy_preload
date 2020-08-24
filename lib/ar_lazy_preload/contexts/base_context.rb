@@ -38,7 +38,6 @@ module ArLazyPreload
         raise NotImplementedError
       end
 
-
       private
 
       def perform_preloading(association_name)

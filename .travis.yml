@@ -20,6 +20,7 @@ gemfile:
   - gemfiles/railsmaster.gemfile
 
 env:
+  - TASK=rubocop
   - TASK=spec
   - TASK=bench
   - TASK=memory
@@ -35,6 +36,17 @@ matrix:
       env: TASK=bench
     - rvm: ruby-head
       env: TASK=bench
+
+    - rvm: 2.3
+      env: TASK=rubocop
+    - rvm: 2.4
+      env: TASK=rubocop
+    - rvm: 2.5
+      env: TASK=rubocop
+    - rvm: 2.6
+      env: TASK=rubocop
+    - rvm: ruby-head
+      env: TASK=rubocop
 
     - rvm: 2.3
       env: TASK=memory
@@ -60,6 +72,9 @@ matrix:
       gemfile: gemfiles/rails_5_0.gemfile
     - rvm: 2.6
       gemfile: gemfiles/rails_5_1.gemfile
+    - rvm: 2.6
+      gemfile: gemfiles/rails_6_0.gemfile
+      env: TASK=rubocop
 
   allow_failures:
     - rvm: ruby-head
