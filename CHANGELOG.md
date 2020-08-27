@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.5.0 (2020-08-27)
+
 - [PR [#25](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/25)] Ruby 2.7 support ([@DmitryTsepelev][])
 
 ## 0.4.0 (2020-08-24)
