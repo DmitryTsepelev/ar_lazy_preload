@@ -14,3 +14,4 @@ Gemfile.local
 
 # Ignore Appraisal related files
 gemfiles/*.gemfile.lock
+.ruby-version

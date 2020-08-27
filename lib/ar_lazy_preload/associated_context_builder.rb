@@ -8,8 +8,8 @@ module ArLazyPreload
   # the associated records based on the parent association tree.
   class AssociatedContextBuilder
     # Initiates lazy preload context the records loaded lazily
-    def self.prepare(*args)
-      new(*args).perform
+    def self.prepare(**args)
+      new(**args).perform
     end
 
     attr_reader :parent_context, :association_name
@@ -23,7 +23,8 @@ module ArLazyPreload
 
     # Takes all the associated records for the records, attached to the :parent_context and creates
     # a preloading context for them
-    def perform # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def perform
       associated_records = parent_context.records.flat_map do |record|
         next if record.nil?
 
@@ -38,6 +39,7 @@ module ArLazyPreload
         auto_preload: parent_context.auto_preload?
       )
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     private
 
