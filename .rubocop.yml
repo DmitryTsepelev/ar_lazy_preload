@@ -18,6 +18,9 @@ Documentation:
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
+Style/SingleLineMethods:
+  Enabled: false
+
 Metrics/LineLength:
   Max: 100
 
