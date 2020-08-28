@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.5.1 (2020-08-28)
+
 - [PR [#38](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/38)] Fix error when association relation spawned from relation with preload_associations_lazily called ([@PikachuEXE][])
 
 ## 0.5.0 (2020-08-27)
