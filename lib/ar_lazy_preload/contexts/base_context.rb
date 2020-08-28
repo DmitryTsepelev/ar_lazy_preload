@@ -19,6 +19,9 @@ module ArLazyPreload
         @records.each { |record| record.lazy_preload_context = self }
       end
 
+      # @api
+      def association_tree; nil; end
+
       # This method checks if the association should be loaded and preloads it for all
       # objects in the context it if needed.
       def try_preload_lazily(association_name)
