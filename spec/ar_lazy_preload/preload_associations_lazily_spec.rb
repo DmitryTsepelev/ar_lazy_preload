@@ -6,17 +6,26 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
   let!(:user1) { create(:user) }
   let!(:user2) { create(:user) }
 
-  let!(:post) { create(:post, user: user1) }
-  let!(:comment1) { create(:comment, user: user1, post: post) }
-  let!(:comment1) { create(:comment, user: user2, post: post) }
+  let!(:post_1) { create(:post, user: user1) }
+  let!(:post_2) { create(:post, user: user2) }
 
   describe "auto preloading" do
-    subject { Comment.preload_associations_lazily }
+    subject { User.preload_associations_lazily }
 
-    # SELECT "comments".* FROM "comments"
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
+    # SELECT "users".* FROM "users"
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
     it "loads association automatically" do
-      expect { subject.each { |comment| comment.user&.id } }.to make_database_queries(count: 2)
+      expect { subject.each { |u| u.posts.map(&:id) } }.to make_database_queries(count: 2)
+    end
+
+    it "does not load association with scope" do
+      expect do
+        subject.flat_map do |u|
+          u.posts.where(
+            created_at: ::Time.zone.at(0)..(::Time.zone.at(0) + 1),
+          ).size
+        end
+      end.to_not raise_error
     end
   end
 end

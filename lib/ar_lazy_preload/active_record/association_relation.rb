@@ -16,6 +16,7 @@ module ArLazyPreload
 
     def setup_preloading_context
       return if lazy_preload_context.nil?
+      return if lazy_preload_context.association_tree.nil?
 
       association_tree_builder = AssociationTreeBuilder.new(lazy_preload_context.association_tree)
       subtree = association_tree_builder.subtree_for(reflection.name)
