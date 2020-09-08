@@ -9,6 +9,15 @@ ActiveRecord::Schema.define do
 
   create_table :posts do |t|
     t.references :user, foreign_key: true
+    t.string :type
+    t.references :level, foreign_key: true
+
+    t.timestamps null: false
+  end
+
+  create_table :levels do |t|
+    t.references :post, foreign_key: true
+    t.string :name
 
     t.timestamps null: false
   end

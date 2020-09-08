@@ -19,6 +19,14 @@ class Post < ActiveRecord::Base
   has_many :votes, as: :voteable
 end
 
+class PrivatePost < Post
+  belongs_to :level
+end
+
+class Level < ActiveRecord::Base
+  has_many :private_posts
+end
+
 class Comment < ActiveRecord::Base
   belongs_to :post
   belongs_to :user

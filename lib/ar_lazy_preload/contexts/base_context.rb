@@ -44,7 +44,11 @@ module ArLazyPreload
       private
 
       def perform_preloading(association_name)
-        preloader.preload(records, association_name)
+        filtered_records = records.select do |record|
+          reflection_names_cache[record.class].include?(association_name)
+        end
+        preloader.preload(filtered_records, association_name)
+
         loaded_association_names.add(association_name)
 
         AssociatedContextBuilder.prepare(
@@ -63,6 +67,12 @@ module ArLazyPreload
 
       def preloader
         @preloader ||= ActiveRecord::Associations::Preloader.new
+      end
+
+      def reflection_names_cache
+        @reflection_names_cache ||= Hash.new do |hash, klass|
+          hash[klass] = klass.reflect_on_all_associations.map(&:name)
+        end
       end
     end
   end

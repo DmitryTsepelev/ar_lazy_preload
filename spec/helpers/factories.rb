@@ -27,6 +27,22 @@ FactoryBot.define do
     end
   end
 
+  factory :private_post do
+    level
+
+    trait :level_two do
+      association :level, :level_two
+    end
+  end
+
+  factory :level do
+    name { "Level one" }
+
+    trait :level_two do
+      name { "Level two" }
+    end
+  end
+
   factory :comment do
     user
   end
