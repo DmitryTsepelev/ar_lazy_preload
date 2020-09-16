@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR [#39](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/39)] Fix error when trying to preload non-existent association on STI model ([@konalegi][])
+
 ## 0.5.1 (2020-08-28)
 
 - [PR [#38](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/38)] Fix error when association relation spawned from relation with preload_associations_lazily called ([@PikachuEXE][])
