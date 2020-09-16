@@ -38,22 +38,30 @@ describe ArLazyPreload do
   describe "has_many" do
     include_examples "check initial loading"
 
-    subject { User.lazy_preload(posts: [:level]) }
+    subject { User.lazy_preload(:posts) }
 
     # SELECT "users".* FROM "users"
     # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
-    # SELECT "levels".* FROM "levels" WHERE "levels"."id" IN (...)
     it "loads lazy_preloaded association" do
-      expect { subject.each(&method(:serialize_user)) }.to make_database_queries(count: 3)
+      expect { subject.each { |u| u.posts.map(&:id) } }.to make_database_queries(count: 2)
     end
 
     it "loads lazy_preloaded association with collection_singular_ids" do
       expect { subject.map(&:post_ids) }.to make_database_queries(count: 2)
     end
 
-    def serialize_user(user)
-      user.posts.each do |post|
-        post.is_a?(PrivatePost) ? post.level.id : post.id
+    context "when STI association implemented not for all" do
+      subject { User.lazy_preload(posts: [:level]) }
+
+      # SELECT "users".* FROM "users"
+      # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
+      # SELECT "levels".* FROM "levels" WHERE "levels"."id" IN (...)
+      it "loads lazy_preloaded STI association" do
+        expect do
+          subject.flat_map(&:posts).each do |post|
+            post.is_a?(PrivatePost) ? post.level.id : post.id
+          end
+        end.to make_database_queries(count: 3)
       end
     end
   end
