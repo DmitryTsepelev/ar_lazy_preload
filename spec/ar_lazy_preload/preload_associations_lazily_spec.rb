@@ -18,6 +18,28 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
       expect { subject.each { |u| u.posts.map(&:id) } }.to make_database_queries(count: 2)
     end
 
+    # SELECT "posts".* FROM "posts"
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
+    # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...)
+    it "loads association of association automatically" do
+      expect do
+        Post.preload_associations_lazily.each do |p|
+          p.user.comments.load
+        end
+      end.to make_database_queries(count: 3)
+    end
+
+    # SELECT "posts".* FROM "posts"
+    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
+    # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...)
+    it "loads association of association automatically when `includes` called" do
+      expect do
+        Post.includes(:user).preload_associations_lazily.each do |p|
+          p.user.comments.load
+        end
+      end.to make_database_queries(count: 3)
+    end
+
     it "does not load association with scope" do
       expect do
         subject.flat_map do |u|
