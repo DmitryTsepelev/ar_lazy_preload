@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.5.2 (2020-09-17)
+
 - [PR [#39](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/39)] Fix error when trying to preload non-existent association on STI model ([@konalegi][])
 
 ## 0.5.1 (2020-08-28)
@@ -76,3 +78,4 @@
 [@zeitnot]: https://github.com/zeitnot
 [@Earendil95]: https://github.com/Earendil95
 [@OuYangJinTing]: https://github.com/OuYangJinTing
+[@konalegi]: https://github.com/konalegi
