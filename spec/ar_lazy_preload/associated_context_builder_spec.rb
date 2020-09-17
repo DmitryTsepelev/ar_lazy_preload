@@ -61,6 +61,27 @@ describe ArLazyPreload::AssociatedContextBuilder do
     [post, comment].each { |voteable| expect(voteable.lazy_preload_context).not_to be_nil }
   end
 
+  it "supports STI associations" do
+    user = create(:user)
+    post1 = create(:post, user: user)
+    post2 = create(:private_post, user: user)
+
+    expect(post2.level).not_to be_nil
+    records = [post1, post2]
+
+    parent_context = ArLazyPreload::Context.register(
+      records: records,
+      association_tree: [posts: :level]
+    )
+
+    described_class.new(
+      parent_context: parent_context,
+      association_name: :level
+    ).perform
+
+    [post2, post1].each { |post| expect(post.lazy_preload_context).not_to be_nil }
+  end
+
   it "skips creating context when child association tree is blank" do
     parent_context = ArLazyPreload::Context.register(
       records: [user_with_post, user_without_posts],

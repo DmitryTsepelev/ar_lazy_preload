@@ -18,6 +18,9 @@ describe ArLazyPreload do
     comment2 = create(:comment, user: user2, post: post1, mentioned_users: [user1])
     user1.vote_for(comment2)
     create(:comment, user: user1, parent_comment: comment2)
+
+    create(:private_post, user: user1)
+    create(:private_post, :level_two, user: user1)
   end
 
   describe "belongs_to" do
@@ -45,6 +48,21 @@ describe ArLazyPreload do
 
     it "loads lazy_preloaded association with collection_singular_ids" do
       expect { subject.map(&:post_ids) }.to make_database_queries(count: 2)
+    end
+
+    context "when STI association implemented not for all" do
+      subject { User.lazy_preload(posts: [:level]) }
+
+      # SELECT "users".* FROM "users"
+      # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
+      # SELECT "levels".* FROM "levels" WHERE "levels"."id" IN (...)
+      it "loads lazy_preloaded STI association" do
+        expect do
+          subject.flat_map(&:posts).each do |post|
+            post.is_a?(PrivatePost) ? post.level.id : post.id
+          end
+        end.to make_database_queries(count: 3)
+      end
     end
   end
 

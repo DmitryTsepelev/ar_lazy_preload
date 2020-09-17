@@ -28,8 +28,10 @@ module ArLazyPreload
       associated_records = parent_context.records.flat_map do |record|
         next if record.nil?
 
-        record_association = record.association(association_name)
         reflection = reflection_cache[record.class]
+        next if reflection.nil?
+
+        record_association = record.association(association_name)
         reflection.collection? ? record_association.target : record_association.reader
       end
 
