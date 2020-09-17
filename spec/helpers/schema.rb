@@ -16,7 +16,6 @@ ActiveRecord::Schema.define do
   end
 
   create_table :levels do |t|
-    t.references :post, foreign_key: true
     t.string :name
 
     t.timestamps null: false
