@@ -68,6 +68,16 @@ Add this line to your application's Gemfile, and you're all set:
 gem "ar_lazy_preload"
 ```
 
+## Limitations
+
+Lazy preloading [does not work](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/40/files) when `.includes` is called earlier:
+
+```ruby
+Post.includes(:user).preload_associations_lazily.each do |p|
+  p.user.comments.load
+end
+```
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
