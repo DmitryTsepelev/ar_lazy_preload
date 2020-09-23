@@ -27,5 +27,15 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
         end
       end.to_not raise_error
     end
+
+    # SELECT "users".* FROM "users"
+    # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...) AND "comments"."parent_comment_id" IS NULL
+    it "does not load association defined with scope" do
+      expect do
+        subject.flat_map do |u|
+          u.thread_comments.size
+        end
+      end.to make_database_queries(count: 2)
+    end
   end
 end
