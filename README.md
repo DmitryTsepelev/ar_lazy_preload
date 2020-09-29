@@ -60,22 +60,25 @@ posts = User.preload_associations_lazily.flat_map(&:posts)
 # => SELECT * FROM posts WHERE user_id in (...)
 ```
 
+## Gotchas
+
+1. Lazy preloading [does not work](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/40/files) when `.includes` is called earlier:
+
+  ```ruby
+  Post.includes(:user).preload_associations_lazily.each do |p|
+    p.user.comments.load
+  end
+  ```
+
+2. When `#size` is called on association (e.g., `User.lazy_preload(:posts).map { |u| u.posts.size }`), lazy preloading won't happen, because `#size` method performs `SELECT COUNT()` database request instead of loading the association when association haven't been loaded yet ([here](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/42) is the issue, and [here](https://blazarblogs.wordpress.com/2019/07/27/activerecord-size-vs-count-vs-length/) is the explanation article about `size`, `length` and `count`).
+
+
 ## Installation
 
 Add this line to your application's Gemfile, and you're all set:
 
 ```ruby
 gem "ar_lazy_preload"
-```
-
-## Limitations
-
-Lazy preloading [does not work](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/40/files) when `.includes` is called earlier:
-
-```ruby
-Post.includes(:user).preload_associations_lazily.each do |p|
-  p.user.comments.load
-end
 ```
 
 ## License
