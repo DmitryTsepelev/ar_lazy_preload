@@ -20,19 +20,32 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
 
     it "does not load association with scope" do
       expect do
-        subject.flat_map do |u|
+        subject.each do |u|
           u.posts.where(
             created_at: ::Time.zone.at(0)..(::Time.zone.at(0) + 1)
-          ).size
+          ).map(&:id)
         end
       end.to_not raise_error
     end
 
     # SELECT "users".* FROM "users"
-    # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...) AND "comments"."parent_comment_id" IS NULL
+    # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...)
+    # AND "comments"."parent_comment_id" IS NULL
     it "does not load association defined with scope" do
       expect do
-        subject.flat_map do |u|
+        subject.each do |u|
+          u.thread_comments.map(&:id)
+        end
+      end.to make_database_queries(count: 2)
+    end
+
+    # SELECT "users".* FROM "users"
+    # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...)
+    # AND "comments"."parent_comment_id" IS NULL
+    it "does not call COUNT(*) when association is already loaded" do
+      expect do
+        subject.each do |u|
+          u.thread_comments.map(&:id)
           u.thread_comments.size
         end
       end.to make_database_queries(count: 2)
