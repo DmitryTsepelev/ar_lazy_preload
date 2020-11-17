@@ -1,0 +1,42 @@
+name: Performance Benchmark
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: "0 10 * * *"
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [2.7]
+        gemfile: ["gemfiles/rails_6_0.gemfile"]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: /home/runner/bundle
+        key: bundle-${{ matrix.ruby }}-${{ matrix.gemfile }}-${{ hashFiles(matrix.gemfile) }}-${{ hashFiles('**/*.gemspec') }}
+        restore-keys: |
+          bundle-${{ matrix.ruby }}-${{ matrix.gemfile }}-
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+    - name: Install system deps
+      run: |
+        sudo apt-get update
+        sudo apt-get install libsqlite3-dev
+    - name: Bundle install
+      run: |
+        bundle config path /home/runner/bundle
+        bundle config --global gemfile ${{ matrix.gemfile }}
+        bundle install
+        bundle update
+    - name: Run bench
+      run: bundle exec rake bench
