@@ -17,26 +17,15 @@ jobs:
       matrix:
         ruby: [2.7]
         gemfile: ["gemfiles/rails_6_0.gemfile"]
+
+    env:
+      BUNDLE_GEMFILE: "${{ matrix.gemfile }}"
+
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/cache@v2
-      with:
-        path: /home/runner/bundle
-        key: bundle-${{ matrix.ruby }}-${{ matrix.gemfile }}-${{ hashFiles(matrix.gemfile) }}-${{ hashFiles('**/*.gemspec') }}
-        restore-keys: |
-          bundle-${{ matrix.ruby }}-${{ matrix.gemfile }}-
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-    - name: Install system deps
-      run: |
-        sudo apt-get update
-        sudo apt-get install libsqlite3-dev
-    - name: Bundle install
-      run: |
-        bundle config path /home/runner/bundle
-        bundle config --global gemfile ${{ matrix.gemfile }}
-        bundle install
-        bundle update
+        bundler-cache: true
     - name: Run bench
       run: bundle exec rake memory
