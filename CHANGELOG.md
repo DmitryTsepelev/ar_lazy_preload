@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.6.0 (2020-11-18)
+
+- [PR [#45](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/45)] Removed Rails 4 support ([@DmitryTsepelev][])
+
 ## 0.5.2 (2020-09-17)
 
 - [PR [#39](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/39)] Fix error when trying to preload non-existent association on STI model ([@konalegi][])
