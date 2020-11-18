@@ -1,0 +1,46 @@
+name: RSpec
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: "0 10 * * *"
+
+jobs:
+  rspec:
+    runs-on: ubuntu-latest
+
+    env:
+      ALLOW_FAILURES: "${{ matrix.allow_failures }}"
+      BUNDLE_GEMFILE: "${{ matrix.gemfile }}"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [2.5, 2.6, 2.7]
+
+        gemfile: [
+          "gemfiles/rails_5_0.gemfile",
+          "gemfiles/rails_5_1.gemfile",
+          "gemfiles/rails_5_2.gemfile",
+          "gemfiles/rails_6_0.gemfile"
+        ]
+
+        allow_failures:
+          - false
+
+        include:
+          - ruby: ruby-head
+            gemfile: gemfiles/railsmaster.gemfile
+            allow_failures: true
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
+    - name: Run RSpec
+      run: bundle exec rake spec || $ALLOW_FAILURES

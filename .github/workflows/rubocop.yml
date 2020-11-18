@@ -1,0 +1,25 @@
+name: Rubocop
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+
+    env:
+      BUNDLE_GEMFILE: "${{ matrix.gemfile }}"
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+        bundler-cache: true
+    - name: Lint Ruby code with RuboCop
+      run: |
+        bundle install --gemfile gemfiles/rails_6_0.gemfile --jobs 4 --retry 3
+        bundle exec --gemfile gemfiles/rails_6_0.gemfile rubocop
