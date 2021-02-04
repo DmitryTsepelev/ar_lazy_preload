@@ -66,6 +66,10 @@ RSpec.shared_examples "check initial loading" do
   end
 end
 
+DBQueryMatchers.configure do |config|
+  config.ignores = [/sqlite_master/, /table_info/]
+end
+
 ActiveRecord::Base.establish_connection(
   adapter: "sqlite3",
   database: ":memory:"
