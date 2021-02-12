@@ -47,7 +47,10 @@ module ArLazyPreload
         filtered_records = records.select do |record|
           reflection_names_cache[record.class].include?(association_name)
         end
-        preloader.preload(filtered_records, association_name)
+
+        TemporaryPreloadConfig.within_context do
+          preloader.preload(filtered_records, association_name)
+        end
 
         loaded_association_names.add(association_name)
 

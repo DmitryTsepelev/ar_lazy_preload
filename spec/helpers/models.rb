@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   has_many :posts
   has_many :comments
   has_many :comments_on_posts, through: :posts, source: :comments
+  has_many :votes
 
   def vote_for(voteable)
     voteable.votes.create(user: self)
@@ -16,6 +17,7 @@ end
 class Post < ActiveRecord::Base
   belongs_to :user
   has_many :comments
+  has_many :comments_with_preloaded_users, -> { includes(:user) }, class_name: "Comment"
   has_many :votes, as: :voteable
 end
 

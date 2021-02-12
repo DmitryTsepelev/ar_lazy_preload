@@ -3,6 +3,7 @@
 require "ar_lazy_preload/contexts/base_context"
 require "ar_lazy_preload/contexts/auto_preload_context"
 require "ar_lazy_preload/contexts/lazy_preload_context"
+require "ar_lazy_preload/contexts/temporary_preload_config"
 
 module ArLazyPreload
   class Context
