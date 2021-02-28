@@ -62,7 +62,7 @@ posts = User.preload_associations_lazily.flat_map(&:posts)
 
 ## Gotchas
 
-1. Lazy preloading [does not work](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/40/files) when `.includes` is called earlier:
+1. Lazy preloading [does not work](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/40/files) for ActiveRecord < 6 when `.includes` is called earlier:
 
   ```ruby
   Post.includes(:user).preload_associations_lazily.each do |p|
