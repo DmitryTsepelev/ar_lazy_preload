@@ -42,6 +42,17 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
       # SELECT "posts".* FROM "posts"
       # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
       # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...)
+      it "loads association of association automatically when `preload` called" do
+        expect do
+          Post.preload(:user).preload_associations_lazily.each do |p|
+            p.user.comments.to_a
+          end
+        end.to make_database_queries(count: 3)
+      end
+
+      # SELECT "posts".* FROM "posts"
+      # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
+      # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...)
       it "loads association of association automatically when `includes` called" do
         expect do
           Post.includes(:user).preload_associations_lazily.each do |p|
@@ -62,6 +73,29 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
             end
           end
         end.to make_database_queries(count: 4)
+      end
+
+      context "with preloader" do
+        let(:preloader) { ActiveRecord::Associations::Preloader.new }
+
+        it "for records with different context, preloaded records should have different context" do
+          user1_with_context = subject.find_by(id: user1.id)
+          user2_with_context = subject.find_by(id: user2.id)
+
+          preloader.preload([user1_with_context, user2_with_context], :posts)
+          expect(user1_with_context.posts.first.lazy_preload_context).not_to eq(
+            user2_with_context.posts.first.lazy_preload_context
+          )
+        end
+
+        it "for records withing same context, preloaded records should inherit context" do
+          user1_with_context, user2_with_context = subject.where(id: [user1.id, user2.id])
+
+          preloader.preload([user1_with_context, user2_with_context], :posts)
+          expect(user1_with_context.posts.first.lazy_preload_context).to eq(
+            user2_with_context.posts.first.lazy_preload_context
+          )
+        end
       end
     end
 
