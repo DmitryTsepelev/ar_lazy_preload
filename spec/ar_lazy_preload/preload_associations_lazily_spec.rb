@@ -38,29 +38,31 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
       end.to make_database_queries(count: 3)
     end
 
-    # SELECT "posts".* FROM "posts"
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
-    # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...)
-    it "loads association of association automatically when `includes` called" do
-      expect do
-        Post.includes(:user).preload_associations_lazily.each do |p|
-          p.user.comments.to_a
-        end
-      end.to make_database_queries(count: 3)
-    end
-
-    # SELECT "posts".* FROM "posts"
-    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (?, ?)
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
-    # SELECT "votes".* FROM "votes" WHERE "votes"."user_id" IN (?, ?)
-    it "loads association of association automatically when `includes` in deep nested" do
-      expect do
-        Post.preload_associations_lazily.each do |post|
-          post.comments_with_preloaded_users.each do |comment|
-            comment.user.votes.to_a
+    if ::ActiveRecord::VERSION::MAJOR >= 6
+      # SELECT "posts".* FROM "posts"
+      # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
+      # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...)
+      it "loads association of association automatically when `includes` called" do
+        expect do
+          Post.includes(:user).preload_associations_lazily.each do |p|
+            p.user.comments.to_a
           end
-        end
-      end.to make_database_queries(count: 4)
+        end.to make_database_queries(count: 3)
+      end
+
+      # SELECT "posts".* FROM "posts"
+      # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (?, ?)
+      # SELECT "users".* FROM "users" WHERE "users"."id" IN (?, ?)
+      # SELECT "votes".* FROM "votes" WHERE "votes"."user_id" IN (?, ?)
+      it "loads association of association automatically when `includes` in deep nested" do
+        expect do
+          Post.preload_associations_lazily.each do |post|
+            post.comments_with_preloaded_users.each do |comment|
+              comment.user.votes.to_a
+            end
+          end
+        end.to make_database_queries(count: 4)
+      end
     end
 
     it "does not load association with scope" do

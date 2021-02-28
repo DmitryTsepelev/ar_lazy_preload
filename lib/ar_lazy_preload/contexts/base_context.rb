@@ -48,16 +48,23 @@ module ArLazyPreload
           reflection_names_cache[record.class].include?(association_name)
         end
 
-        TemporaryPreloadConfig.within_context do
-          preloader.preload(filtered_records, association_name)
-        end
-
+        preload_records(association_name, filtered_records)
         loaded_association_names.add(association_name)
 
         AssociatedContextBuilder.prepare(
           parent_context: self,
           association_name: association_name
         )
+      end
+
+      # Method preloads associations for the specific sets of the records
+      # and provides automatically provides context for the records
+      # loaded using `includes` inside Relation#preload_associations with the
+      # help of the TemporaryPreloadConfig
+      def preload_records(association_name, records)
+        TemporaryPreloadConfig.within_context do
+          preloader.preload(records, association_name)
+        end
       end
 
       def association_loaded?(association_name)

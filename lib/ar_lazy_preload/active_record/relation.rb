@@ -8,11 +8,7 @@ module ArLazyPreload
   module Relation
     attr_writer :preloads_associations_lazily
 
-    def preload_associations(records) # rubocop:disable Metrics/MethodLength :nodoc:
-      if ::ActiveRecord::VERSION::MAJOR != 6
-        raise "This patch desgined to work only with Active Record 6.x"
-      end
-
+    def preload_associations(records)
       preload = preload_values
       preload += includes_values unless eager_loading?
       preloader = nil
@@ -23,21 +19,6 @@ module ArLazyPreload
           handle_preloaded_records(preloader_association.preloaded_records)
         end
       end
-    end
-
-    def handle_preloaded_records(preloaded_records)
-      return unless Contexts::TemporaryPreloadConfig.enabled? || preloads_associations_lazily?
-
-      records_array = case preloaded_records
-                      when Array
-                        preloaded_records
-                      when ::ActiveRecord::Relation
-                        preloaded_records.to_a if preloaded_records.loaded?
-                      end
-
-      return if records_array.nil? || records_array.empty?
-
-      Context.register(records: records_array, association_tree: lazy_preload_values, auto_preload: true)
     end
 
     # Enhanced #load method will check if association has not been loaded yet and add a context
@@ -106,6 +87,29 @@ module ArLazyPreload
 
     def preloads_associations_lazily?
       @preloads_associations_lazily ||= false
+    end
+
+    def handle_preloaded_records(preloaded_records)
+      return unless Contexts::TemporaryPreloadConfig.enabled? || preloads_associations_lazily?
+
+      records_array = preloaded_records_to_array(preloaded_records)
+
+      return unless records_array&.any?
+
+      Context.register(
+        records: records_array,
+        association_tree: lazy_preload_values,
+        auto_preload: true
+      )
+    end
+
+    def preloaded_records_to_array(records)
+      case records
+      when Array
+        records
+      when ::ActiveRecord::Relation
+        records.to_a if records.loaded?
+      end
     end
 
     attr_writer :lazy_preload_values

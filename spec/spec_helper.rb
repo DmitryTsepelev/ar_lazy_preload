@@ -80,10 +80,3 @@ require File.dirname(__FILE__) + "/helpers/models.rb"
 require File.dirname(__FILE__) + "/helpers/factories.rb"
 
 ActiveRecord::Base.logger = Logger.new(STDOUT) if ENV["SQL"]
-
-DBQueryMatchers.configure do |config|
-  config.ignores = [
-    /\APRAGMA/,
-    /\(SELECT \* FROM sqlite_master/
-  ]
-end

@@ -2,6 +2,7 @@
 
 module ArLazyPreload
   module Contexts
+    # Preload config that used to enable preloading only for specfic part of the application
     class TemporaryPreloadConfig
       THREAD_KEY = "temporary_preload_context_enabled"
 
