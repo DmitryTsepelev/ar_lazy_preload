@@ -103,6 +103,9 @@ module ArLazyPreload
       )
     end
 
+    # For different versions of rails we have different records class
+    # for ~> 6.1.0 it returns plain array
+    # for ~> 6.0.0 it returns ActiveRecord::Relation
     def preloaded_records_to_array(records)
       case records
       when Array
