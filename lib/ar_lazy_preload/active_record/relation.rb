@@ -2,6 +2,7 @@
 
 require "ar_lazy_preload/context"
 require "ar_lazy_preload/contexts/temporary_preload_config"
+require "ar_lazy_preload/preloaded_records_converter"
 
 module ArLazyPreload
   # ActiveRecord::Relation patch with lazy preloading support
@@ -92,7 +93,7 @@ module ArLazyPreload
     def handle_preloaded_records(preloaded_records)
       return unless Contexts::TemporaryPreloadConfig.enabled? || preloads_associations_lazily?
 
-      records_array = preloaded_records_to_array(preloaded_records)
+      records_array = PreloadedRecordsConverter.call(preloaded_records)
 
       return unless records_array&.any?
 
@@ -101,18 +102,6 @@ module ArLazyPreload
         association_tree: lazy_preload_values,
         auto_preload: true
       )
-    end
-
-    # For different versions of rails we have different records class
-    # for ~> 6.1.0 it returns plain array
-    # for ~> 6.0.0 it returns ActiveRecord::Relation
-    def preloaded_records_to_array(records)
-      case records
-      when Array
-        records
-      when ::ActiveRecord::Relation
-        records.to_a if records.loaded?
-      end
     end
 
     attr_writer :lazy_preload_values
