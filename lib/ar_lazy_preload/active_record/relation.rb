@@ -1,11 +1,26 @@
 # frozen_string_literal: true
 
 require "ar_lazy_preload/context"
+require "ar_lazy_preload/contexts/temporary_preload_config"
+require "ar_lazy_preload/preloaded_records_converter"
 
 module ArLazyPreload
   # ActiveRecord::Relation patch with lazy preloading support
   module Relation
     attr_writer :preloads_associations_lazily
+
+    def preload_associations(records)
+      preload = preload_values
+      preload += includes_values unless eager_loading?
+      preloader = nil
+      preload.each do |associations|
+        preloader ||= build_preloader
+        preloader_associations = preloader.preload records, associations
+        preloader_associations.each do |preloader_association|
+          handle_preloaded_records(preloader_association.preloaded_records)
+        end
+      end
+    end
 
     # Enhanced #load method will check if association has not been loaded yet and add a context
     # for lazy preloading to loaded each record
@@ -73,6 +88,20 @@ module ArLazyPreload
 
     def preloads_associations_lazily?
       @preloads_associations_lazily ||= false
+    end
+
+    def handle_preloaded_records(preloaded_records)
+      return unless Contexts::TemporaryPreloadConfig.enabled? || preloads_associations_lazily?
+
+      records_array = PreloadedRecordsConverter.call(preloaded_records)
+
+      return unless records_array&.any?
+
+      Context.register(
+        records: records_array,
+        association_tree: lazy_preload_values,
+        auto_preload: true
+      )
     end
 
     attr_writer :lazy_preload_values
