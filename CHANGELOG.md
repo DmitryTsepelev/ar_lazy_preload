@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.6.1 (2021-03-04)
+
+- [PR [#48](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/48)] Fix deep nested includes ([@konalegi][])
+
 ## 0.6.0 (2020-11-18)
 
 - [PR [#45](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/45)] Removed Rails 4 support ([@DmitryTsepelev][])
