@@ -9,8 +9,8 @@ module ArLazyPreload
       setup_preloading_context unless ArLazyPreload.config.auto_preload?
     end
 
-    delegate :owner, :reflection, to: :proxy_association
-    delegate :lazy_preload_context, to: :owner
+    delegate :owner, :reflection, to: :proxy_association, prefix: true
+    delegate :lazy_preload_context, to: :proxy_association_owner
 
     private
 
@@ -19,7 +19,7 @@ module ArLazyPreload
       return if lazy_preload_context.association_tree.nil?
 
       association_tree_builder = AssociationTreeBuilder.new(lazy_preload_context.association_tree)
-      subtree = association_tree_builder.subtree_for(reflection.name)
+      subtree = association_tree_builder.subtree_for(proxy_association_reflection.name)
 
       lazy_preload!(subtree)
     end
