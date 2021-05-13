@@ -8,6 +8,8 @@ class User < ActiveRecord::Base
   has_many :comments
   has_many :comments_on_posts, through: :posts, source: :comments
   has_many :votes
+  has_many :club_memberships, class_name: 'ClubMember'
+  has_many :clubs, through: :club_memberships, source: :user
 
   def vote_for(voteable)
     voteable.votes.create(user: self)
@@ -54,4 +56,16 @@ end
 class Vote < ActiveRecord::Base
   belongs_to :user
   belongs_to :voteable, polymorphic: true
+end
+
+class Club < ActiveRecord::Base
+  has_many :memberships, class_name: 'ClubMember'
+  has_many :members, through: :memberships, source: :user
+end
+
+class ClubMember < ActiveRecord::Base
+  belongs_to :club
+  belongs_to :user
+
+  enum role: { owner: 0, contributor: 1 }
 end

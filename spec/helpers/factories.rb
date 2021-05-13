@@ -48,4 +48,12 @@ FactoryBot.define do
   end
 
   factory :vote
+
+  factory :club
+
+  factory :club_member do
+    club
+    user
+    role { :owner }
+  end
 end
