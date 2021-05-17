@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   has_many :comments
   has_many :comments_on_posts, through: :posts, source: :comments
   has_many :votes
-  has_many :club_memberships, class_name: 'ClubMember'
+  has_many :club_memberships, class_name: "ClubMember"
   has_many :clubs, through: :club_memberships, source: :user
 
   def vote_for(voteable)
@@ -59,7 +59,7 @@ class Vote < ActiveRecord::Base
 end
 
 class Club < ActiveRecord::Base
-  has_many :memberships, class_name: 'ClubMember'
+  has_many :memberships, class_name: "ClubMember"
   has_many :members, through: :memberships, source: :user
 end
 
