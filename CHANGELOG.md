@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.6.2 (2021-05-18)
+
 - [PR [#50](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/50)] Issue-49 fix - add prefix to owner attribute ([@RuslanKhabibullin][])
 
 ## 0.6.1 (2021-03-04)
