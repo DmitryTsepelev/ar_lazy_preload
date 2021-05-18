@@ -54,4 +54,19 @@ ActiveRecord::Schema.define do
 
     t.timestamps null: false
   end
+
+  create_table :clubs do |t|
+    t.string :name
+
+    t.timestamps null: false
+  end
+
+  create_table :club_members do |t|
+    t.references :club
+    t.references :user
+
+    t.integer :role, null: false
+
+    t.timestamps null: false
+  end
 end

@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR [#50](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/50)] Issue-49 fix - add prefix to owner attribute ([@RuslanKhabibullin][])
+
 ## 0.6.1 (2021-03-04)
 
 - [PR [#48](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/48)] Fix deep nested includes ([@konalegi][])
@@ -87,3 +89,4 @@
 [@Earendil95]: https://github.com/Earendil95
 [@OuYangJinTing]: https://github.com/OuYangJinTing
 [@konalegi]: https://github.com/konalegi
+[@RuslanKhabibullin]: https://github.com/RuslanKhabibullin
