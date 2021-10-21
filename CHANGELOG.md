@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.7.0 (2021-10-21)
+
+- [PR [#53](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/53)] Avoid preloading associations with instance dependent scopes  ([@vala][])
+
 ## 0.6.2 (2021-05-18)
 
 - [PR [#50](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/50)] Issue-49 fix - add prefix to owner attribute ([@RuslanKhabibullin][])
@@ -92,3 +96,4 @@
 [@OuYangJinTing]: https://github.com/OuYangJinTing
 [@konalegi]: https://github.com/konalegi
 [@RuslanKhabibullin]: https://github.com/RuslanKhabibullin
+[@vala]: https://github.com/vala
