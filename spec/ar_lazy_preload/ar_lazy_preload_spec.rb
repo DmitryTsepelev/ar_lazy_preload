@@ -64,6 +64,34 @@ describe ArLazyPreload do
         end.to make_database_queries(count: 3)
       end
     end
+
+    context "when the relation has a scope" do
+      context "when the scope takes no argument" do
+        subject { Post.lazy_preload(:comment_threads) }
+
+        it "loads lazy_preloaded associations" do
+          expect do
+            subject.map do |post|
+              post.comment_threads.map(&:id)
+            end
+          end.to make_database_queries(count: 2)
+        end
+      end
+
+      context "when the scope takes an argument and is instance-dependant" do
+        subject { Post.lazy_preload(:comments_published_since) }
+
+        it "doesn't load lazy_preloaded associations" do
+          expected_calls = subject.count + 1
+
+          expect do
+            subject.map do |post|
+              post.comments_published_after_last_update.map(&:id)
+            end
+          end.to make_database_queries(count: expected_calls)
+        end
+      end
+    end
   end
 
   describe "has_many through" do
