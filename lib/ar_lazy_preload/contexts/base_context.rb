@@ -45,7 +45,7 @@ module ArLazyPreload
 
       def perform_preloading(association_name)
         filtered_records = records.select do |record|
-          reflection_names_cache[record.class].include?(association_name)
+          preloadable_record?(association_name, record)
         end
 
         preload_records(association_name, filtered_records)
@@ -79,10 +79,29 @@ module ArLazyPreload
         @preloader ||= ActiveRecord::Associations::Preloader.new
       end
 
-      def reflection_names_cache
-        @reflection_names_cache ||= Hash.new do |hash, klass|
-          hash[klass] = klass.reflect_on_all_associations.map(&:name)
+      def preloadable_record?(association_name, record)
+        preloadable_reflections_cache.dig(record.class, association_name)
+      end
+
+      def preloadable_reflections_cache
+        @preloadable_reflections_cache ||= Hash.new do |hash, klass|
+          associations = klass.reflect_on_all_associations
+
+          hash[klass] = associations.each_with_object({}) do |reflection, cache|
+            cache[reflection.name] = preloadable_reflection?(klass, reflection)
+          end
         end
+      end
+
+      def preloadable_reflection?(klass, reflection)
+        scope = reflection.scope
+        preloadable_scope = scope&.arity&.zero?
+        through_reflection =
+          reflection.options[:through] && klass.reflect_on_association(reflection.options[:through])
+        preloadable_through_reflection =
+          through_reflection && preloadable_reflection?(klass, through_reflection)
+
+        (!scope || preloadable_scope) && (!through_reflection || preloadable_through_reflection)
       end
     end
   end
