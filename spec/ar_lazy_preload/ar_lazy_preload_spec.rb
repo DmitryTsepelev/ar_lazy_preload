@@ -247,13 +247,24 @@ describe ArLazyPreload do
       expect { subject.map { |vote| vote.voteable.id } }.to make_database_queries(count: 3)
     end
 
-    # SELECT "votes".* FROM "votes"
-    # SELECT "posts".* FROM "posts" WHERE "posts"."id" IN (...)
-    # SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (...)
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...) - for posts
-    # SELECT "users".* FROM "users" WHERE "users"."id" IN (...) - for comments
-    it "loads embedded lazy_preloaded association" do
-      expect { subject.map { |vote| vote.voteable.user.id } }.to make_database_queries(count: 5)
+    if ::ActiveRecord::VERSION::MAJOR >= 7
+      # SELECT "votes".* FROM "votes"
+      # SELECT "posts".* FROM "posts" WHERE "posts"."id" IN (...)
+      # SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (...)
+      # SELECT "users".* FROM "users" WHERE "users"."id" IN (...) - for posts
+      it "loads embedded lazy_preloaded association" do
+        # we have 4 queries because new preloader knows how to batch queries to the same table
+        expect { subject.map { |vote| vote.voteable.user.id } }.to make_database_queries(count: 4)
+      end
+    else
+      # SELECT "votes".* FROM "votes"
+      # SELECT "posts".* FROM "posts" WHERE "posts"."id" IN (...)
+      # SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (...)
+      # SELECT "users".* FROM "users" WHERE "users"."id" IN (...) - for posts
+      # SELECT "users".* FROM "users" WHERE "users"."id" IN (...) - for comments
+      it "loads embedded lazy_preloaded association" do
+        expect { subject.map { |vote| vote.voteable.user.id } }.to make_database_queries(count: 5)
+      end
     end
   end
 

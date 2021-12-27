@@ -2,6 +2,7 @@
 
 require "set"
 require "ar_lazy_preload/associated_context_builder"
+require "ar_lazy_preload/preloader"
 
 module ArLazyPreload
   module Contexts
@@ -63,7 +64,7 @@ module ArLazyPreload
       # help of the TemporaryPreloadConfig
       def preload_records(association_name, records)
         TemporaryPreloadConfig.within_context do
-          preloader.preload(records, association_name)
+          ArLazyPreload::Preloader.new(records, [association_name]).preload
         end
       end
 
@@ -73,10 +74,6 @@ module ArLazyPreload
 
       def loaded_association_names
         @loaded_association_names ||= Set.new
-      end
-
-      def preloader
-        @preloader ||= ActiveRecord::Associations::Preloader.new
       end
 
       def preloadable_record?(association_name, record)

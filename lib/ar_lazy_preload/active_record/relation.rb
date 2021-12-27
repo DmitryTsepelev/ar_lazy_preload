@@ -12,11 +12,9 @@ module ArLazyPreload
     def preload_associations(records)
       preload = preload_values
       preload += includes_values unless eager_loading?
-      preloader = nil
+
       preload.each do |associations|
-        preloader ||= build_preloader
-        preloader_associations = preloader.preload records, associations
-        preloader_associations.each do |preloader_association|
+        ArLazyPreload::Preloader.new(records, associations).preload.each do |preloader_association|
           handle_preloaded_records(preloader_association.preloaded_records)
         end
       end
