@@ -32,7 +32,7 @@ jobs:
 
     - name: Collect coverage info
       run: bundle exec rake spec
-      
+
     - name: Coveralls Parallel
       uses: coverallsapp/github-action@master
       continue-on-error: true

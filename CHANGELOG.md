@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR [#55](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/55)] Rails 7 support; removed some old Rails from CI, removed not supported Ruby versions ([@DmitryTsepelev][])
+
 ## 0.7.0 (2021-10-21)
 
 - [PR [#53](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/53)] Avoid preloading associations with instance dependent scopes  ([@vala][])

@@ -76,25 +76,60 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
       end
 
       context "with preloader" do
-        let(:preloader) { ActiveRecord::Associations::Preloader.new }
+        if ::ActiveRecord::VERSION::MAJOR >= 7
+          context "for records with different context" do
+            it "preloaded records should have different context" do
+              user1_with_context = subject.find_by(id: user1.id)
+              user2_with_context = subject.find_by(id: user2.id)
 
-        it "for records with different context, preloaded records should have different context" do
-          user1_with_context = subject.find_by(id: user1.id)
-          user2_with_context = subject.find_by(id: user2.id)
+              ActiveRecord::Associations::Preloader.new(
+                records: [user1_with_context, user2_with_context], associations: [:posts]
+              ).call
 
-          preloader.preload([user1_with_context, user2_with_context], :posts)
-          expect(user1_with_context.posts.first.lazy_preload_context).not_to eq(
-            user2_with_context.posts.first.lazy_preload_context
-          )
-        end
+              expect(user1_with_context.posts.first.lazy_preload_context).not_to eq(
+                user2_with_context.posts.first.lazy_preload_context
+              )
+            end
+          end
 
-        it "for records withing same context, preloaded records should inherit context" do
-          user1_with_context, user2_with_context = subject.where(id: [user1.id, user2.id])
+          context "for records withing same context" do
+            it "preloaded records should inherit context" do
+              user1_with_context, user2_with_context = subject.where(id: [user1.id, user2.id])
 
-          preloader.preload([user1_with_context, user2_with_context], :posts)
-          expect(user1_with_context.posts.first.lazy_preload_context).to eq(
-            user2_with_context.posts.first.lazy_preload_context
-          )
+              ActiveRecord::Associations::Preloader.new(
+                records: [user1_with_context, user2_with_context], associations: [:posts]
+              ).call
+
+              expect(user1_with_context.posts.first.lazy_preload_context).to eq(
+                user2_with_context.posts.first.lazy_preload_context
+              )
+            end
+          end
+        else
+          let(:preloader) { ActiveRecord::Associations::Preloader.new }
+
+          context "for records with different context" do
+            it "preloaded records should have different context" do
+              user1_with_context = subject.find_by(id: user1.id)
+              user2_with_context = subject.find_by(id: user2.id)
+
+              preloader.preload([user1_with_context, user2_with_context], :posts)
+              expect(user1_with_context.posts.first.lazy_preload_context).not_to eq(
+                user2_with_context.posts.first.lazy_preload_context
+              )
+            end
+          end
+
+          context "for records withing same context" do
+            it "preloaded records should inherit context" do
+              user1_with_context, user2_with_context = subject.where(id: [user1.id, user2.id])
+
+              preloader.preload([user1_with_context, user2_with_context], :posts)
+              expect(user1_with_context.posts.first.lazy_preload_context).to eq(
+                user2_with_context.posts.first.lazy_preload_context
+              )
+            end
+          end
         end
       end
     end

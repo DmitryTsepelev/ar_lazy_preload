@@ -25,6 +25,8 @@ module ArLazyPreload
 
         ActiveRecord::Associations::CollectionAssociation.prepend(CollectionAssociation)
         ActiveRecord::Associations::CollectionProxy.prepend(CollectionProxy)
+
+        ArLazyPreload::Preloader.patch_for_rails_7! if ActiveRecord::VERSION::MAJOR >= 7
       end
     end
   end
