@@ -50,6 +50,8 @@ If you want to turn automatic preload off for a specific record, you can call `.
 users.first.skip_preload.posts # => SELECT * FROM posts WHERE user_id = ?
 ```
 
+> *Warning* : Using the `ArLazyPreload.config.auto_preload` feature makes ArLazyPreload try to preload *every* association target throughout your app, and in any other gem that makes association target calls. When enabling the setting in an existing app, you may find some edge cases where previous working queries now fail, and you should test most of your app paths to ensure that there are no such issues.
+
 ### Relation auto preloading
 
 Another alternative for auto preloading is using relation `#preload_associations_lazily` method
