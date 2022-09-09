@@ -14,4 +14,14 @@ describe ArLazyPreload::Base do
 
     it { is_expected.to respond_to(:skip_preload) }
   end
+
+  describe "#reload" do
+    it "should keep the context" do
+      create(:user)
+      user = User.preload_associations_lazily.first
+      puts user.lazy_preload_context.inspect
+      user.reload
+      puts user.lazy_preload_context.inspect
+    end
+  end
 end
