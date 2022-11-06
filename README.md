@@ -1,4 +1,4 @@
-# ArLazyPreload [![Cult Of Martians](http://cultofmartians.com/assets/badges/badge.svg)](https://cultofmartians.com/tasks/activerecord-lazy-preload.html) [![Gem Version](https://badge.fury.io/rb/ar_lazy_preload.svg)](https://rubygems.org/gems/ar_lazy_preload) [![Build Status](https://github.com/DmitryTsepelev/ar_lazy_preload/actions/workflows/rspec.yml/badge.svg)](https://github.com/DmitryTsepelev/ar_lazy_preload/actions/workflows/rspec.yml) [![Maintainability](https://api.codeclimate.com/v1/badges/00d04595661820dfba80/maintainability)](https://codeclimate.com/github/DmitryTsepelev/ar_lazy_preload/maintainability) [![Coverage Status](https://coveralls.io/repos/github/DmitryTsepelev/ar_lazy_preload/badge.svg?branch=master)](https://coveralls.io/github/DmitryTsepelev/ar_lazy_preload?branch=master)
+# ArLazyPreload [![Cult Of Martians](http://cultofmartians.com/assets/badges/badge.svg)](https://cultofmartians.com/tasks/activerecord-lazy-preload.html) [![Gem Version](https://badge.fury.io/rb/ar_lazy_preload.svg)](https://rubygems.org/gems/ar_lazy_preload) [![Build Status](https://github.com/DmitryTsepelev/ar_lazy_preload/actions/workflows/rspec.yml/badge.svg)](https://github.com/DmitryTsepelev/ar_lazy_preload/actions/workflows/rspec.yml) [![Maintainability](https://api.codeclimate.com/v1/badges/00d04595661820dfba80/maintainability)](https://codeclimate.com/github/DmitryTsepelev/ar_lazy_preload/maintainability) [![Coverage Status](https://coveralls.io/repos/github/DmitryTsepelev/ar_lazy_preload/badge.svg?branch=master)](https://coveralls.io/github/DmitryTsepelev/ar_lazy_preload?branch=master) ![](https://ruby-gem-downloads-badge.herokuapp.com/ar_lazy_preload?type=total)
 
 **ArLazyPreload** is a gem that brings association lazy load functionality to your Rails applications. There is a number of built-in methods to solve [N+1 problem](https://guides.rubyonrails.org/active_record_querying.html#eager-loading-associations), but sometimes a list of associations to preload is not obvious–this is when you can get most of this gem.
 
@@ -6,12 +6,6 @@
 - **Fast**. Take a look at [performance benchmark](https://github.com/DmitryTsepelev/ar_lazy_preload/actions/workflows/bench.yml) and [memory benchmark](https://github.com/DmitryTsepelev/ar_lazy_preload/actions/workflows/memory.yml)
 - **Perfect fit for GraphQL**. Define a list of associations to load at the top-level resolver and let the gem do its job
 - **Auto-preload support**. If you don't want to specify the association list–set `ArLazyPreload.config.auto_preload` to `true`
-
-<p align="center">
-  <a href="https://evilmartians.com/?utm_source=ar_lazy_preload">
-    <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54">
-  </a>
-</p>
 
 ## Why should I use it?
 
@@ -82,6 +76,10 @@ Add this line to your application's Gemfile, and you're all set:
 ```ruby
 gem "ar_lazy_preload"
 ```
+
+## Credits
+
+Initially sponsored by [Evil Martians](http://evilmartians.com).
 
 ## License
 
