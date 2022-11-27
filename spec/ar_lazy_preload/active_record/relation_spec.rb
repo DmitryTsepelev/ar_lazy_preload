@@ -86,7 +86,11 @@ describe ArLazyPreload::Relation do
       initial_context = relation.first.lazy_preload_context
 
       relation.reload
-      expect(relation.first.lazy_preload_context).not_to eq(initial_context)
+
+      relation.first.lazy_preload_context.tap do |context|
+        expect(context).not_to eq(initial_context)
+        expect(context).not_to be_nil
+      end
     end
 
     it "not creates context when relation is empty" do
