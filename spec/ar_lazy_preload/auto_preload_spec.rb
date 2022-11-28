@@ -8,9 +8,9 @@ describe "ArLazyPreload.config.auto_preload" do
 
   let!(:post) { create(:post, user: user1) }
   let!(:comment1) { create(:comment, user: user1, post: post) }
-  let!(:comment1) { create(:comment, user: user2, post: post) }
+  let!(:comment2) { create(:comment, user: user2, post: post) }
 
-  before(:all) { ArLazyPreload.config.auto_preload = true }
+  before(:each) { ArLazyPreload.config.auto_preload = true }
 
   describe "auto preloading" do
     subject { Comment.all }
@@ -18,7 +18,27 @@ describe "ArLazyPreload.config.auto_preload" do
     # SELECT "comments".* FROM "comments"
     # SELECT "users".* FROM "users" WHERE "users"."id" IN (...)
     it "loads association automatically" do
-      expect { subject.each { |comment| comment.user&.id } }.to make_database_queries(count: 2)
+      expect { subject.map { |comment| comment.user&.id } }.to make_database_queries(count: 2)
+    end
+  end
+
+  describe "when new record is saved" do
+    subject { comment }
+
+    let!(:comment) { create(:comment, user_id: user.id, post: post) }
+    let(:user) { create(:user) }
+    let(:post) { create(:post) }
+
+    before do
+      create_list(:post, 3, :with_comments, user: user)
+    end
+
+    # SELECT "users".* FROM "users" WHERE "users"."id" = ?
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = ?
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (?, ?)
+    it "adds context to saved record" do
+      expect { subject.user.posts.map { |post| post.comments.map(&:id) } }.to \
+        make_database_queries(count: 3)
     end
   end
 end

@@ -8,7 +8,7 @@ require "ar_lazy_preload/contexts/temporary_preload_config"
 module ArLazyPreload
   class Context
     # Initiates lazy preload context for given records
-    def self.register(records:, association_tree:, auto_preload: false)
+    def self.register(records:, association_tree: nil, auto_preload: false)
       return if records.empty?
 
       if ArLazyPreload.config.auto_preload? || auto_preload
