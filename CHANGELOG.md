@@ -2,6 +2,8 @@
 
 ## master
 
+## 1.1.0 (2022-12-01)
+
 - [PR [#61](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/61)] Initialize lazy context for newly created records when `auto_preload` is on ([@DmitryTsepelev][])
 
 ## 1.0.0 (2021-12-29 🎄🎅)
