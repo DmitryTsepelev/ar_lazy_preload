@@ -13,8 +13,8 @@ module ArLazyPreload
 
     delegate :try_preload_lazily, to: :lazy_preload_context, allow_nil: true
 
-    def reload
-      super.tap { try_setup_auto_preload_context }
+    def reload(options = nil)
+      super(options).tap { try_setup_auto_preload_context }
     end
 
     def skip_preload
