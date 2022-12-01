@@ -2,6 +2,8 @@
 
 ## master
 
+## 1.1.1 (2022-12-01 🤦‍♂️)
+
 - [PR [#63](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/63)] Pass arguments to `.reload` ([@DmitryTsepelev][])
 
 ## 1.1.0 (2022-12-01)
