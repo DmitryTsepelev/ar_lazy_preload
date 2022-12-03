@@ -22,6 +22,16 @@ describe "ArLazyPreload.config.auto_preload" do
     end
   end
 
+  describe "#find_by" do
+    subject { User.find_by(id: user.id) }
+
+    let(:user) { create(:user) }
+
+    it "creates_context" do
+      expect(subject.lazy_preload_context).not_to be_nil
+    end
+  end
+
   describe "when new record is saved" do
     subject { comment }
 

@@ -6,7 +6,10 @@ module ArLazyPreload
     def self.included(base)
       base.class.delegate :lazy_preload, to: :all
       base.class.delegate :preload_associations_lazily, to: :all
+
       base.after_create { try_setup_auto_preload_context }
+
+      base.extend(ClassMethods)
     end
 
     attr_accessor :lazy_preload_context
@@ -23,10 +26,14 @@ module ArLazyPreload
       self
     end
 
-    private
-
     def try_setup_auto_preload_context
       ArLazyPreload::Context.register(records: [self]) if ArLazyPreload.config.auto_preload?
+    end
+
+    module ClassMethods
+      def find_by(*args)
+        super(*args).tap { |object| object&.try_setup_auto_preload_context }
+      end
     end
   end
 end
