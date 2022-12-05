@@ -15,6 +15,16 @@ describe ArLazyPreload::Base do
     it { is_expected.to respond_to(:skip_preload) }
   end
 
+  describe "#find_by" do
+    subject { User.find_by(id: user.id) }
+
+    let(:user) { create(:user) }
+
+    it "not creates_context" do
+      expect(subject.lazy_preload_context).to be_nil
+    end
+  end
+
   describe "#reload" do
     let!(:user) { create(:user) }
 
