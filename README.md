@@ -7,6 +7,12 @@
 - **Perfect fit for GraphQL**. Define a list of associations to load at the top-level resolver and let the gem do its job
 - **Auto-preload support**. If you don't want to specify the association list–set `ArLazyPreload.config.auto_preload` to `true`
 
+Used in production by:
+
+- [Fund that flip](https://evilmartians.com/chronicles/big-refactoring-fix-that-app-for-fund-that-flip)
+- Toptal
+- _Want to be here? Let me know_ 🙂
+
 ## Why should I use it?
 
 Lazy loading is super helpful when the list of associations to load is determined dynamically. For instance, in GraphQL this list comes from the API client, and you'll have to inspect the selection set to find out what associations are going to be used.
