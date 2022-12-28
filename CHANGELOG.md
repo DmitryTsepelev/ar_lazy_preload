@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR [#64](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/64)] Deprecate old Ruby and Rails versions ([@DmitryTsepelev][])
+
 ## 1.1.2 (2022-12-05)
 
 - [PR [#64](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/64)] Create context after `find_by`/`find_by!` when `auto_preload` is on ([@DmitryTsepelev][])
