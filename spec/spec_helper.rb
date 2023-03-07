@@ -28,7 +28,7 @@ require "factory_bot"
 if ENV.fetch("RACK", "false").downcase.strip == "true"
   require_relative "dummy_rack/setup"
 else
-  require_relative "dummy/config/environment"
+  require_relative "dummy_rails/config/environment"
 end
 
 require "ar_lazy_preload"
