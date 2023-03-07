@@ -20,12 +20,17 @@ if ENV["COVERALLS"]
   end
 end
 
-require_relative "dummy/config/environment"
-
 require "active_record"
 require "db_query_matchers"
 require "database_cleaner"
 require "factory_bot"
+
+if ENV.fetch("RACK", "false").downcase.strip == "true"
+  require_relative "dummy_rack/setup"
+else
+  require_relative "dummy/config/environment"
+end
+
 require "ar_lazy_preload"
 
 RSpec.configure do |config|
