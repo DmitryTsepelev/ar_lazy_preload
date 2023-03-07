@@ -138,7 +138,7 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
       expect do
         subject.flat_map do |u|
           u.posts.where(
-            created_at: ::Time.zone.at(0)..(::Time.zone.at(0) + 1)
+            created_at: ::Time.at(0).utc..(::Time.at(0).utc + 1)
           ).size
         end
       end.to_not raise_error
