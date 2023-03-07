@@ -6,7 +6,7 @@ require "memory_profiler"
 
 ENV["RAILS_ENV"] = "test"
 
-require_relative "./../spec/dummy/config/environment"
+require_relative "./../spec/dummy_rails/config/environment"
 
 require "active_record"
 require "ar_lazy_preload"
