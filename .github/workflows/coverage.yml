@@ -30,8 +30,11 @@ jobs:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
 
-    - name: Collect coverage info
+    - name: Collect coverage info (Rails mode)
       run: bundle exec rake spec
+
+    - name: Collect coverage info (Rack mode)
+      run: RACK=true bundle exec rake spec
 
     - name: Coveralls Parallel
       uses: coverallsapp/github-action@master

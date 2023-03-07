@@ -52,5 +52,8 @@ jobs:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
 
-    - name: Run RSpec
+    - name: Run RSpec (Rails mode)
       run: bundle exec rake spec || $ALLOW_FAILURES
+
+    - name: Run RSpec (Rack mode)
+      run: RACK=true bundle exec rake spec || $ALLOW_FAILURES
