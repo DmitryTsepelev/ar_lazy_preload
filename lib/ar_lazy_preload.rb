@@ -24,10 +24,8 @@ module ArLazyPreload
       ActiveRecord::AssociationRelation.prepend(AssociationRelation)
       ActiveRecord::Relation::Merger.prepend(Merger)
 
-      [
-        ActiveRecord::Associations::CollectionAssociation,
-        ActiveRecord::Associations::Association
-      ].each { |klass| klass.prepend(Association) }
+      ActiveRecord::Associations::CollectionAssociation.prepend(Association)
+      ActiveRecord::Associations::Association.prepend(Association)
 
       ActiveRecord::Associations::CollectionAssociation.prepend(CollectionAssociation)
       ActiveRecord::Associations::CollectionProxy.prepend(CollectionProxy)
