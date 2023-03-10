@@ -2,6 +2,9 @@
 
 ## master
 
+## 2.0.0 Rails Free 👋 🛤️ (2023-03-10)
+
+- [PR [#52](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/52)] Remove Rails direct dependency ([@taylorthurlow][])
 - [PR [#64](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/64)] Deprecate old Ruby and Rails versions ([@DmitryTsepelev][])
 
 ## 1.1.2 (2022-12-05)
@@ -115,3 +118,4 @@
 [@konalegi]: https://github.com/konalegi
 [@RuslanKhabibullin]: https://github.com/RuslanKhabibullin
 [@vala]: https://github.com/vala
+[@taylorthurlow]: https://github.com/taylorthurlow
