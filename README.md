@@ -6,6 +6,7 @@
 - **Fast**. Take a look at [performance benchmark](https://github.com/DmitryTsepelev/ar_lazy_preload/actions/workflows/bench.yml) and [memory benchmark](https://github.com/DmitryTsepelev/ar_lazy_preload/actions/workflows/memory.yml)
 - **Perfect fit for GraphQL**. Define a list of associations to load at the top-level resolver and let the gem do its job
 - **Auto-preload support**. If you don't want to specify the association list–set `ArLazyPreload.config.auto_preload` to `true`
+- **Integrated with [N1Loader](https://github.com/djezzzl/n1_loader)**. Fulfills all your needs to define custom N+1 optimized loaders of any kind.
 
 Used in production by:
 
