@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.1
   Include:
     - 'lib/**/*.rb'
     - 'spec/**/*.rb'
@@ -13,6 +13,21 @@ AllCops:
     - '*.gemspec'
 
 Documentation:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Style/StringConcatenation:
+  Enabled: false
+
+Style/HashSyntax:
   Enabled: false
 
 Style/StringLiterals:

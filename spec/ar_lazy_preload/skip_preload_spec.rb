@@ -38,7 +38,7 @@ describe "ArLazyPreload.skip_preload" do
       expect do
         subject.first.posts.to_a
       end.to make_database_queries(
-        matching: /\"user_id\" IN ([(#{id_concat})|(#{question_concat})])/
+        matching: /"user_id" IN ([(#{id_concat})|(#{question_concat})])/
       )
     end
   end

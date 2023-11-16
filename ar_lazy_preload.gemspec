@@ -16,12 +16,12 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
-  s.required_ruby_version = ">= 2.7"
+  s.required_ruby_version = ">= 3.0"
 
-  s.add_development_dependency "rails", ">= 6.0"
+  s.add_development_dependency "rails", ">= 6.1"
   s.add_development_dependency "rspec"
   s.add_development_dependency "rspec-rails"
-  s.add_development_dependency "rubocop", "0.81.0"
+  s.add_development_dependency "rubocop", "1.57.2"
   s.add_development_dependency "db-query-matchers"
   s.add_development_dependency "simplecov"
   s.add_development_dependency "simplecov-lcov"

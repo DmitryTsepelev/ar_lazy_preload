@@ -8,6 +8,6 @@ local_gemfile = File.join(__dir__, "Gemfile.local")
 if File.exist?(local_gemfile)
   eval(File.read(local_gemfile)) # rubocop:disable Security/Eval
 else
-  gem "sqlite3", "~> 1.4.0"
-  gem "rails", "~> 6.0.0"
+  gem "sqlite3", "~> 1.6.8"
+  gem "rails", "~> 7.1.0"
 end

@@ -16,12 +16,12 @@ describe ArLazyPreload::Merger do
 
     it "supports deeper lazy_preload" do
       relation = users_with_posts.merge(users_with_posts_and_comments)
-      expect(relation.lazy_preload_values).to eq([:posts, posts: :comments])
+      expect(relation.lazy_preload_values).to eq([:posts, { posts: :comments }])
     end
 
     it "supports reflection" do
       relation = users_with_posts.merge(posts_with_authors)
-      expect(relation.lazy_preload_values).to eq([:posts, posts: [:user]])
+      expect(relation.lazy_preload_values).to eq([:posts, { posts: [:user] }])
     end
   end
 end

@@ -15,8 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [2.7]
-        gemfile: ["gemfiles/rails_6_0.gemfile"]
+        ruby-version: [3.1]
+        gemfile: ["gemfiles/rails_7_1.gemfile"]
 
     env:
       BUNDLE_GEMFILE: "${{ matrix.gemfile }}"
@@ -25,7 +25,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby }}
+        ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
     - name: Run bench
       run: bundle exec rake bench

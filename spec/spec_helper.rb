@@ -84,4 +84,4 @@ load File.dirname(__FILE__) + "/helpers/schema.rb"
 require File.dirname(__FILE__) + "/helpers/models.rb"
 require File.dirname(__FILE__) + "/helpers/factories.rb"
 
-ActiveRecord::Base.logger = Logger.new(STDOUT) if ENV["SQL"]
+ActiveRecord::Base.logger = Logger.new($stdout) if ENV["SQL"]
