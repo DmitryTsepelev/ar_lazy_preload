@@ -25,15 +25,11 @@ jobs:
           "gemfiles/rails_6_1.gemfile",
           "gemfiles/rails_7_0.gemfile",
           "gemfiles/rails_7_1.gemfile",
+          "gemfiles/railsmaster.gemfile",
         ]
 
         allow_failures:
           - false
-
-        include:
-          - ruby: ruby-head
-            gemfile: gemfiles/railsmaster.gemfile
-            allow_failures: true
 
     steps:
     - uses: actions/checkout@v3
