@@ -8,9 +8,9 @@ ActiveRecord::Schema.define do
   end
 
   create_table :posts do |t|
-    t.references :user, foreign_key: true
+    t.references :user
     t.string :type
-    t.references :level, foreign_key: true
+    t.references :level
 
     t.timestamps null: false
   end
@@ -22,9 +22,9 @@ ActiveRecord::Schema.define do
   end
 
   create_table :comments do |t|
-    t.references :post, foreign_key: true
-    t.references :user, foreign_key: true
-    t.integer :parent_comment_id, foreign_key: true, table_name: :comments
+    t.references :post
+    t.references :user
+    t.integer :parent_comment_id
 
     t.timestamps null: false
   end
@@ -36,7 +36,7 @@ ActiveRecord::Schema.define do
   end
 
   create_table :account_histories do |t|
-    t.references :account, foreign_key: true
+    t.references :account
 
     t.timestamps null: false
   end
@@ -50,7 +50,7 @@ ActiveRecord::Schema.define do
 
   create_table :votes do |t|
     t.references :voteable, polymorphic: true, index: true
-    t.references :user, foreign_key: true
+    t.references :user
 
     t.timestamps null: false
   end
@@ -69,4 +69,12 @@ ActiveRecord::Schema.define do
 
     t.timestamps null: false
   end
+
+  add_foreign_key :posts, :users
+  add_foreign_key :posts, :levels
+  add_foreign_key :comments, :posts
+  add_foreign_key :comments, :users
+  add_foreign_key :comments, :comments, column: :parent_comment_id
+  add_foreign_key :account_histories, :accounts
+  add_foreign_key :votes, :users
 end
