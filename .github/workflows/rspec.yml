@@ -31,6 +31,10 @@ jobs:
         allow_failures:
           - false
 
+        exclude:
+          - ruby: '3.0'
+            gemfile: gemfiles/railsmaster.gemfile
+
     steps:
     - uses: actions/checkout@v3
 
