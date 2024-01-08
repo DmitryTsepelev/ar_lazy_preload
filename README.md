@@ -74,6 +74,7 @@ posts = User.preload_associations_lazily.flat_map(&:posts)
 
 2. When `#size` is called on association (e.g., `User.lazy_preload(:posts).map { |u| u.posts.size }`), lazy preloading won't happen, because `#size` method performs `SELECT COUNT()` database request instead of loading the association when association haven't been loaded yet ([here](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/42) is the issue, and [here](https://blazarblogs.wordpress.com/2019/07/27/activerecord-size-vs-count-vs-length/) is the explanation article about `size`, `length` and `count`).
 
+3. Lazy preloading for **ActiveStorage** variants is not working automatically because of the way how it is implemented ([here](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/70) is the issue). You can preload them manually by calling `#with_all_variant_records`/`#with_attached_#{attachment_name}` on association. Example: `User.with_attached_avatar.first(10).map { |u| u.avatar.variant(:small).processed.url }`
 
 ## Installation
 
