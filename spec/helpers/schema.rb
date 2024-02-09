@@ -4,6 +4,8 @@ ActiveRecord::Schema.define do
   self.verbose = false
 
   create_table :users, force: true do |t|
+    t.string :name
+
     t.timestamps null: false
   end
 
@@ -25,6 +27,7 @@ ActiveRecord::Schema.define do
     t.references :post
     t.references :user
     t.integer :parent_comment_id
+    t.text :body
 
     t.timestamps null: false
   end

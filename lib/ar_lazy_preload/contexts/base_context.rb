@@ -92,7 +92,7 @@ module ArLazyPreload
 
       def preloadable_reflection?(klass, reflection)
         scope = reflection.scope
-        preloadable_scope = scope&.arity&.zero?
+        preloadable_scope = scope&.arity&.zero? || ::ActiveRecord::VERSION::MAJOR >= 7
         through_reflection =
           reflection.options[:through] && klass.reflect_on_association(reflection.options[:through])
         preloadable_through_reflection =
