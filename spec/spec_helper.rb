@@ -58,6 +58,14 @@ RSpec.configure do |config|
     DatabaseCleaner.cleaning { example.run }
   end
 
+  config.before(:all) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:all) do
+    DatabaseCleaner.clean
+  end
+
   config.after(:each) do
     if ArLazyPreload.instance_variable_defined?(:@config)
       ArLazyPreload.remove_instance_variable(:@config)

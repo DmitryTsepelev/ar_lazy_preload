@@ -79,16 +79,43 @@ describe ArLazyPreload do
       end
 
       context "when the scope takes an argument and is instance-dependant" do
-        subject { Post.lazy_preload(:comments_published_since) }
+        subject { User.lazy_preload(posts: :comments_mentioning_user).first }
 
-        it "doesn't load lazy_preloaded associations" do
-          expected_calls = subject.count + 1
-
-          expect do
-            subject.map do |post|
-              post.comments_published_after_last_update.map(&:id)
-            end
-          end.to make_database_queries(count: expected_calls)
+        if ::ActiveRecord::VERSION::MAJOR >= 7
+          # SELECT "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT ?
+          # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = ?
+          # SELECT "comments".*
+          #   FROM "comments"
+          #   WHERE (comments.body LIKE NULL) AND "comments"."post_id" IN (...)
+          it "loads lazy_preloaded associations" do
+            expect do
+              subject.posts.map do |post|
+                post.comments_mentioning_user.map(&:id)
+              end
+            end.to make_database_queries(count: 3)
+          end
+        else
+          # SELECT "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT ?
+          # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = ?
+          # SELECT "comments".*
+          #   FROM "comments"
+          #   WHERE "comments"."post_id" = ? AND (comments.body LIKE NULL)
+          # SELECT "comments".*
+          #   FROM "comments"
+          #   WHERE "comments"."post_id" = ? AND (comments.body LIKE NULL)
+          # SELECT "comments".*
+          #   FROM "comments"
+          #   WHERE "comments"."post_id" = ? AND (comments.body LIKE NULL)
+          # SELECT "comments".*
+          #   FROM "comments"
+          #   WHERE "comments"."post_id" = ? AND (comments.body LIKE NULL)
+          it "doesn't load lazy_preloaded associations" do
+            expect do
+              subject.posts.map do |post|
+                post.comments_mentioning_user.map(&:id)
+              end
+            end.to make_database_queries(count: 6)
+          end
         end
       end
     end
