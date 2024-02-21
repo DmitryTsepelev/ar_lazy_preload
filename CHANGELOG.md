@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR [#71](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/71)] Support lazy preloading of instance-dependent associations for Rails 7 and above ([@tatsuyafw][])
+
 ## 2.0.0 Rails Free 👋 🛤️ (2023-03-10)
 
 - [PR [#52](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/52)] Remove Rails direct dependency ([@taylorthurlow][])
@@ -119,3 +121,4 @@
 [@RuslanKhabibullin]: https://github.com/RuslanKhabibullin
 [@vala]: https://github.com/vala
 [@taylorthurlow]: https://github.com/taylorthurlow
+[@tatsuyafw]: https://github.com/tatsuyafw
