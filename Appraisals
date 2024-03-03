@@ -17,5 +17,5 @@ end
 
 appraise "railsmaster" do
   gem "rails", github: "rails/rails", branch: "main"
-  gem "sqlite3", "~> 1.6.8"
+  gem "sqlite3", "~> 1.7.2"
 end
