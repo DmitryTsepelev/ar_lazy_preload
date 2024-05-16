@@ -48,7 +48,7 @@ RSpec.configure do |config|
   # trick to handle moved method; can be dropped later
   DatabaseCleaner::ActiveRecord::Base.singleton_class.prepend(Module.new do
     def migration_table_name
-      return super if ::ActiveRecord.version != Gem::Version.new("7.2.0.alpha")
+      return super if ::ActiveRecord.version < Gem::Version.new("7.2.0")
 
       ::ActiveRecord::Base.connection_pool.schema_migration
     end
