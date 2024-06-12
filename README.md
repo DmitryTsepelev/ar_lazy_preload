@@ -76,6 +76,8 @@ posts = User.preload_associations_lazily.flat_map(&:posts)
 
 3. Lazy preloading for **ActiveStorage** variants is not working automatically because of the way how it is implemented ([here](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/70) is the issue). You can preload them manually by calling `#with_all_variant_records`/`#with_attached_#{attachment_name}` on association. Example: `User.with_attached_avatar.first(10).map { |u| u.avatar.variant(:small).processed.url }`
 
+4. Lazy preloading does not work for association object creation methods, so it is better if you separate the logic for writing and reading objects and use lazy preloading for read only, more information with example [here](https://github.com/DmitryTsepelev/ar_lazy_preload/issues/75)
+
 ## Installation
 
 Add this line to your application's Gemfile, and you're all set:
