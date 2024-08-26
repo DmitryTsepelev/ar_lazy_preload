@@ -13,6 +13,8 @@ Used in production by:
 - Toptal
 - _Want to be here? Let me know_ 🙂
 
+You can support my open–source work [here](https://boosty.to/dmitry_tsepelev).
+
 ## Why should I use it?
 
 Lazy loading is super helpful when the list of associations to load is determined dynamically. For instance, in GraphQL this list comes from the API client, and you'll have to inspect the selection set to find out what associations are going to be used.
