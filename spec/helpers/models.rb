@@ -71,5 +71,5 @@ class ClubMember < ActiveRecord::Base
   belongs_to :club
   belongs_to :user
 
-  enum role: { owner: 0, contributor: 1 }
+  enum :role, { owner: 0, contributor: 1 }
 end

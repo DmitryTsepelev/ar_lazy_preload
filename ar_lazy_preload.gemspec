@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 3.0"
 
-  s.add_development_dependency "rails", ">= 6.1"
+  s.add_development_dependency "rails", ">= 7.0"
   s.add_development_dependency "rspec"
   s.add_development_dependency "rspec-rails"
   s.add_development_dependency "rubocop", "1.57.2"
