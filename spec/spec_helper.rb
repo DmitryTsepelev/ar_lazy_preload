@@ -22,7 +22,8 @@ end
 
 require "active_record"
 require "db_query_matchers"
-require "database_cleaner"
+require "database_cleaner-active_record"
+require "database_cleaner/active_record/base"
 require "factory_bot"
 
 if ENV.fetch("RACK", "false").downcase.strip == "true"
