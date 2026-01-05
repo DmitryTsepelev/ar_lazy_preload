@@ -30,4 +30,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "appraisal"
   s.add_development_dependency "memory_profiler"
   s.add_development_dependency "pry"
+  s.add_development_dependency "benchmark"
+  s.add_development_dependency "ostruct"
 end
