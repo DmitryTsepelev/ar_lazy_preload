@@ -2,6 +2,7 @@
 
 $:.push File.expand_path("lib", __dir__)
 
+require "benchmark"
 require "memory_profiler"
 
 ENV["RAILS_ENV"] = "test"
