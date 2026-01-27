@@ -148,6 +148,28 @@ describe ArLazyPreload do
         end
       end
     end
+
+    it "sets lazy_preload_context on intermediate association" do
+      subject.each do |user|
+        user.comments_on_posts.to_a # Trigger preloading
+        user.posts.each do |post|
+          expect(post.lazy_preload_context).not_to be_nil
+        end
+      end
+    end
+
+    # SELECT "users".* FROM "users"
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+    # SELECT "votes".* FROM "votes" WHERE "votes"."voteable_type" = 'Post' AND ...
+    it "allows batch loading associations on intermediate records" do
+      expect do
+        subject.each do |user|
+          user.comments_on_posts.to_a
+          user.posts.each { |post| post.votes.to_a }
+        end
+      end.to make_database_queries(count: 4)
+    end
   end
 
   describe "has_one" do
@@ -176,10 +198,26 @@ describe ArLazyPreload do
       expect { subject.each { |user| user.account_history.id } }.to make_database_queries(count: 3)
     end
 
+    it "does not trigger additional queries for intermediate association" do
+      expect do
+        subject.each do |user|
+          user.account_history&.id
+          user.account&.id
+        end
+      end.to make_database_queries(count: 3)
+    end
+
     it "passes lazy_preload_values down" do
       subject.each do |user|
         child_context = user.account_history.lazy_preload_context
         expect(child_context.association_tree).to eq([:account])
+      end
+    end
+
+    it "sets lazy_preload_context on intermediate association" do
+      subject.each do |user|
+        user.account_history # Trigger preloading
+        expect(user.account.lazy_preload_context).not_to be_nil
       end
     end
   end

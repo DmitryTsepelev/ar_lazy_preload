@@ -52,10 +52,63 @@ module ArLazyPreload
         preload_records(association_name, filtered_records)
         loaded_association_names.add(association_name)
 
+        # Prepare context for intermediate through associations
+        prepare_through_association_contexts(association_name, filtered_records)
+
         AssociatedContextBuilder.prepare(
           parent_context: self,
           association_name: association_name
         )
+      end
+
+      # Prepare context for intermediate associations in through chains
+      def prepare_through_association_contexts(association_name, filtered_records)
+        filtered_records.group_by(&:class).each do |klass, klass_records|
+          chain = through_association_chain(association_name, klass)
+          next if chain.empty?
+
+          chain.each do |intermediate_name|
+            register_intermediate_context(klass, klass_records, intermediate_name)
+          end
+        end
+      end
+
+      def register_intermediate_context(klass, klass_records, intermediate_name)
+        return if association_loaded?(intermediate_name)
+
+        reflection = klass.reflect_on_association(intermediate_name)
+        return if reflection.nil?
+
+        loaded_association_names.add(intermediate_name)
+
+        intermediate_records = collect_intermediate_records(klass_records, reflection)
+        return if intermediate_records.empty?
+
+        ArLazyPreload::Context.register(records: intermediate_records, auto_preload: true)
+      end
+
+      def collect_intermediate_records(klass_records, reflection)
+        klass_records.flat_map do |record|
+          record_association = record.association(reflection.name)
+          reflection.collection? ? record_association.target : record_association.reader
+        end.compact
+      end
+
+      # Extract chain of intermediate association names for through associations
+      def through_association_chain(association_name, klass)
+        reflection = klass.reflect_on_association(association_name)
+        return [] unless reflection&.options&.key?(:through)
+
+        chain = []
+        current_reflection = reflection
+
+        while current_reflection&.options&.key?(:through)
+          through_name = current_reflection.options[:through]
+          chain.unshift(through_name)
+          current_reflection = klass.reflect_on_association(through_name)
+        end
+
+        chain
       end
 
       # Method preloads associations for the specific sets of the records
