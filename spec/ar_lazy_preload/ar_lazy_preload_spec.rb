@@ -148,6 +148,15 @@ describe ArLazyPreload do
         end
       end
     end
+
+    it "sets lazy_preload_context on intermediate association" do
+      subject.each do |user|
+        user.comments_on_posts.to_a # Trigger preloading
+        user.posts.each do |post|
+          expect(post.lazy_preload_context).not_to be_nil
+        end
+      end
+    end
   end
 
   describe "has_one" do
@@ -176,10 +185,26 @@ describe ArLazyPreload do
       expect { subject.each { |user| user.account_history.id } }.to make_database_queries(count: 3)
     end
 
+    it "does not trigger additional queries for intermediate association" do
+      expect do
+        subject.each do |user|
+          user.account_history&.id
+          user.account&.id
+        end
+      end.to make_database_queries(count: 3)
+    end
+
     it "passes lazy_preload_values down" do
       subject.each do |user|
         child_context = user.account_history.lazy_preload_context
         expect(child_context.association_tree).to eq([:account])
+      end
+    end
+
+    it "sets lazy_preload_context on intermediate association" do
+      subject.each do |user|
+        user.account_history # Trigger preloading
+        expect(user.account.lazy_preload_context).not_to be_nil
       end
     end
   end
