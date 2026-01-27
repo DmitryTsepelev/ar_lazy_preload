@@ -64,27 +64,34 @@ module ArLazyPreload
       # Prepare context for intermediate associations in through chains
       def prepare_through_association_contexts(association_name, filtered_records)
         filtered_records.group_by(&:class).each do |klass, klass_records|
-          through_association_chain(association_name, klass).each do |intermediate_name|
-            next if association_loaded?(intermediate_name)
+          chain = through_association_chain(association_name, klass)
+          next if chain.empty?
 
-            loaded_association_names.add(intermediate_name)
-
-            # Collect intermediate records directly
-            intermediate_records = klass_records.flat_map do |record|
-              reflection = klass.reflect_on_association(intermediate_name)
-              next if reflection.nil?
-
-              record_association = record.association(intermediate_name)
-              reflection.collection? ? record_association.target : record_association.reader
-            end.compact
-
-            # Register with auto_preload to ensure context is created even without explicit tree
-            ArLazyPreload::Context.register(
-              records: intermediate_records,
-              auto_preload: true
-            )
+          chain.each do |intermediate_name|
+            register_intermediate_context(klass, klass_records, intermediate_name)
           end
         end
+      end
+
+      def register_intermediate_context(klass, klass_records, intermediate_name)
+        return if association_loaded?(intermediate_name)
+
+        reflection = klass.reflect_on_association(intermediate_name)
+        return if reflection.nil?
+
+        loaded_association_names.add(intermediate_name)
+
+        intermediate_records = collect_intermediate_records(klass_records, reflection)
+        return if intermediate_records.empty?
+
+        ArLazyPreload::Context.register(records: intermediate_records, auto_preload: true)
+      end
+
+      def collect_intermediate_records(klass_records, reflection)
+        klass_records.flat_map do |record|
+          record_association = record.association(reflection.name)
+          reflection.collection? ? record_association.target : record_association.reader
+        end.compact
       end
 
       # Extract chain of intermediate association names for through associations

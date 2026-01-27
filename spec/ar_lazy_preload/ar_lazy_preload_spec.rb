@@ -157,6 +157,19 @@ describe ArLazyPreload do
         end
       end
     end
+
+    # SELECT "users".* FROM "users"
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+    # SELECT "votes".* FROM "votes" WHERE "votes"."voteable_type" = 'Post' AND ...
+    it "allows batch loading associations on intermediate records" do
+      expect do
+        subject.each do |user|
+          user.comments_on_posts.to_a
+          user.posts.each { |post| post.votes.to_a }
+        end
+      end.to make_database_queries(count: 4)
+    end
   end
 
   describe "has_one" do
