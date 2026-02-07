@@ -2,6 +2,8 @@
 
 ## master
 
+## 2.1.1 (2026-02-07)
+
 - [PR [#79](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/79)] Set min Rails version to 7.0 ([@DmitryTsepelev][])
 - [PR [#88](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/88)] Attempt to fix :through association context ([@gbudiman][])
 
