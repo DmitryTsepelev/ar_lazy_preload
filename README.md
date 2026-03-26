@@ -13,7 +13,10 @@ Used in production by:
 - Toptal
 - _Want to be here? Let me know_ 🙂
 
-You can support my open–source work [here](https://boosty.to/dmitry_tsepelev).
+## Professional Support
+
+Dealing with performance issues in your Rails app beyond N+1 queries?
+I'm available for consulting — [get in touch](https://dmitrytsepelev.dev/consulting).
 
 ## Why should I use it?
 
