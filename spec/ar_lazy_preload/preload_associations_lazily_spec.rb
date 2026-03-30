@@ -144,4 +144,32 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
       end.to_not raise_error
     end
   end
+
+  describe "has_one through with STI" do
+    let!(:candidate1) { create(:candidate, name: "Alice") }
+    let!(:candidate2) { create(:candidate, name: "Bob") }
+    let!(:application1) { create(:application, candidate: candidate1) }
+    let!(:application2) { create(:application, candidate: candidate2) }
+    let!(:assignment1) { create(:assignment, application: application1) }
+    let!(:assignment2) { create(:assignment, application: application2) }
+
+    # When STI is involved, the preloader uses a LEFT OUTER JOIN strategy
+    # which does not mark the intermediate belongs_to as loaded on each record.
+    # Previously, collect_intermediate_records called .reader on the unloaded
+    # association proxy, triggering an extra SELECT per record.
+    it "does not trigger extra queries for intermediate association" do
+      assignments = Assignment.preload_associations_lazily.to_a
+
+      expect do
+        assignments.each { |a| a.candidate }
+      end.to make_database_queries(count: 1)
+    end
+
+    it "sets lazy_preload_context on the through-association result" do
+      assignments = Assignment.preload_associations_lazily.to_a
+      assignments.each do |a|
+        expect(a.candidate.lazy_preload_context).not_to be_nil
+      end
+    end
+  end
 end

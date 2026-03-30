@@ -90,7 +90,7 @@ module ArLazyPreload
       def collect_intermediate_records(klass_records, reflection)
         klass_records.flat_map do |record|
           record_association = record.association(reflection.name)
-          reflection.collection? ? record_association.target : record_association.reader
+          record_association.target
         end.compact
       end
 

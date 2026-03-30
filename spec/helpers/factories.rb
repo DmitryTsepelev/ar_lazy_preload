@@ -56,4 +56,16 @@ FactoryBot.define do
     user
     role { :owner }
   end
+
+  factory :candidate do
+    name { "Test Candidate" }
+  end
+
+  factory :application do
+    candidate
+  end
+
+  factory :assignment do
+    application
+  end
 end
