@@ -23,7 +23,7 @@ module ArLazyPreload
 
     # Takes all the associated records for the records, attached to the :parent_context and creates
     # a preloading context for them
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def perform
       associated_records = parent_context.records.flat_map do |record|
         next if record.nil?
@@ -41,7 +41,7 @@ module ArLazyPreload
         auto_preload: parent_context.auto_preload?
       )
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     private
 

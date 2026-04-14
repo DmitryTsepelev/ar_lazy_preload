@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR [#91](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/91)] Fix extra queries for singular through-associations with STI ([@AlfonsoUceda][])
+
 ## 2.1.1 (2026-02-07)
 
 - [PR [#79](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/79)] Set min Rails version to 7.0 ([@DmitryTsepelev][])
@@ -130,3 +132,4 @@
 [@taylorthurlow]: https://github.com/taylorthurlow
 [@tatsuyafw]: https://github.com/tatsuyafw
 [@gbudiman]: https://github.com/gbudiman
+[@AlfonsoUceda]: https://github.com/AlfonsoUceda

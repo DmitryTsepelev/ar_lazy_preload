@@ -161,7 +161,7 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
       assignments = Assignment.preload_associations_lazily.to_a
 
       expect do
-        assignments.each { |a| a.candidate }
+        assignments.each(&:candidate)
       end.to make_database_queries(count: 1)
     end
 
