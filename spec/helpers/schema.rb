@@ -73,6 +73,26 @@ ActiveRecord::Schema.define do
     t.timestamps null: false
   end
 
+  create_table :people do |t|
+    t.string :type, null: false
+    t.string :name
+
+    t.timestamps null: false
+  end
+
+  create_table :applications do |t|
+    t.references :candidate, null: false, foreign_key: { to_table: :people }
+    t.string :status, default: "pending"
+
+    t.timestamps null: false
+  end
+
+  create_table :assignments do |t|
+    t.references :application, null: false, foreign_key: true
+
+    t.timestamps null: false
+  end
+
   add_foreign_key :posts, :users
   add_foreign_key :posts, :levels
   add_foreign_key :comments, :posts

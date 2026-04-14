@@ -32,7 +32,7 @@ module ArLazyPreload
         next if reflection.nil?
 
         record_association = record.association(association_name)
-        reflection.collection? ? record_association.target : record_association.reader
+        record_association.target
       end
 
       Context.register(

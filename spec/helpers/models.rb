@@ -73,3 +73,18 @@ class ClubMember < ActiveRecord::Base
 
   enum :role, { owner: 0, contributor: 1 }
 end
+
+class Person < ActiveRecord::Base
+end
+
+class Candidate < Person
+end
+
+class Application < ActiveRecord::Base
+  belongs_to :candidate, class_name: "Candidate"
+end
+
+class Assignment < ActiveRecord::Base
+  belongs_to :application
+  has_one :candidate, through: :application
+end
