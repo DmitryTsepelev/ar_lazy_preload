@@ -67,6 +67,10 @@ posts = User.preload_associations_lazily.flat_map(&:posts)
 # => SELECT * FROM posts WHERE user_id in (...)
 ```
 
+## Companion gem for non-association N+1s
+
+[`N1Loader`](https://github.com/djezzzl/n1_loader) complements ArLazyPreload for batched lazy loading in places where regular ActiveRecord associations are not available (for example, computed values, custom loaders, service/API calls, and GraphQL fields). ArLazyPreload can stay focused on association loading while N1Loader handles the remaining N+1-prone derived data.
+
 ## Gotchas
 
 1. Lazy preloading [does not work](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/40/files) for ActiveRecord < 6 when `.includes` is called earlier:

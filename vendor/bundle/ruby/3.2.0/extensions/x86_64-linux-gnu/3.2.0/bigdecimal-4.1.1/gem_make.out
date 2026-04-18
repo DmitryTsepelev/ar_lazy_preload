@@ -23,17 +23,17 @@ checking for RUBY_TYPED_EMBEDDABLE in ruby.h... no
 creating Makefile
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/bigdecimal-4.1.1/ext/bigdecimal
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-7kjdg1 sitelibdir\=./.gem.20260418-3988-7kjdg1 clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-t6u39j sitelibdir\=./.gem.20260418-4931-t6u39j clean
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/bigdecimal-4.1.1/ext/bigdecimal
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-7kjdg1 sitelibdir\=./.gem.20260418-3988-7kjdg1
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-t6u39j sitelibdir\=./.gem.20260418-4931-t6u39j
 compiling bigdecimal.c
 compiling missing.c
 linking shared-object bigdecimal.so
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/bigdecimal-4.1.1/ext/bigdecimal
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-7kjdg1 sitelibdir\=./.gem.20260418-3988-7kjdg1 install
-/usr/bin/install -c -m 0755 bigdecimal.so ./.gem.20260418-3988-7kjdg1
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-t6u39j sitelibdir\=./.gem.20260418-4931-t6u39j install
+/usr/bin/install -c -m 0755 bigdecimal.so ./.gem.20260418-4931-t6u39j
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/bigdecimal-4.1.1/ext/bigdecimal
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-7kjdg1 sitelibdir\=./.gem.20260418-3988-7kjdg1 clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-t6u39j sitelibdir\=./.gem.20260418-4931-t6u39j clean

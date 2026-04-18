@@ -3,16 +3,16 @@ current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bund
 creating Makefile
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/websocket-driver-0.8.0/ext/websocket-driver
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-drl0ul sitelibdir\=./.gem.20260418-3988-drl0ul clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-1tarrw sitelibdir\=./.gem.20260418-4931-1tarrw clean
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/websocket-driver-0.8.0/ext/websocket-driver
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-drl0ul sitelibdir\=./.gem.20260418-3988-drl0ul
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-1tarrw sitelibdir\=./.gem.20260418-4931-1tarrw
 compiling websocket_mask.c
 linking shared-object websocket_mask.so
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/websocket-driver-0.8.0/ext/websocket-driver
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-drl0ul sitelibdir\=./.gem.20260418-3988-drl0ul install
-/usr/bin/install -c -m 0755 websocket_mask.so ./.gem.20260418-3988-drl0ul
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-1tarrw sitelibdir\=./.gem.20260418-4931-1tarrw install
+/usr/bin/install -c -m 0755 websocket_mask.so ./.gem.20260418-4931-1tarrw
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/websocket-driver-0.8.0/ext/websocket-driver
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-drl0ul sitelibdir\=./.gem.20260418-3988-drl0ul clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-1tarrw sitelibdir\=./.gem.20260418-4931-1tarrw clean

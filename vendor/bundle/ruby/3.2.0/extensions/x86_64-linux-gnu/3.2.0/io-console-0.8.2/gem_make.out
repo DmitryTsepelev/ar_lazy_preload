@@ -16,16 +16,16 @@ checking for ttyname_r()... yes
 creating Makefile
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/io-console-0.8.2/ext/io/console
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-xzgq5g sitelibdir\=./.gem.20260418-3988-xzgq5g clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-f8b52o sitelibdir\=./.gem.20260418-4931-f8b52o clean
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/io-console-0.8.2/ext/io/console
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-xzgq5g sitelibdir\=./.gem.20260418-3988-xzgq5g
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-f8b52o sitelibdir\=./.gem.20260418-4931-f8b52o
 compiling console.c
 linking shared-object io/console.so
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/io-console-0.8.2/ext/io/console
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-xzgq5g sitelibdir\=./.gem.20260418-3988-xzgq5g install
-/usr/bin/install -c -m 0755 console.so ./.gem.20260418-3988-xzgq5g/io
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-f8b52o sitelibdir\=./.gem.20260418-4931-f8b52o install
+/usr/bin/install -c -m 0755 console.so ./.gem.20260418-4931-f8b52o/io
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/io-console-0.8.2/ext/io/console
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-xzgq5g sitelibdir\=./.gem.20260418-3988-xzgq5g clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-f8b52o sitelibdir\=./.gem.20260418-4931-f8b52o clean

@@ -6,10 +6,10 @@ checking for whether -fvisibility=hidden is accepted as CFLAGS... yes
 creating Makefile
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/prism-1.9.0/ext/prism
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-4dmxqx sitelibdir\=./.gem.20260418-3988-4dmxqx clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-6dblle sitelibdir\=./.gem.20260418-4931-6dblle clean
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/prism-1.9.0/ext/prism
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-4dmxqx sitelibdir\=./.gem.20260418-3988-4dmxqx
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-6dblle sitelibdir\=./.gem.20260418-4931-6dblle
 compiling api_node.c
 compiling api_pack.c
 compiling ./../../src/diagnostic.c
@@ -37,8 +37,8 @@ compiling ./../../src/token_type.c
 linking shared-object prism/prism.so
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/prism-1.9.0/ext/prism
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-4dmxqx sitelibdir\=./.gem.20260418-3988-4dmxqx install
-/usr/bin/install -c -m 0755 prism.so ./.gem.20260418-3988-4dmxqx/prism
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-6dblle sitelibdir\=./.gem.20260418-4931-6dblle install
+/usr/bin/install -c -m 0755 prism.so ./.gem.20260418-4931-6dblle/prism
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/prism-1.9.0/ext/prism
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-4dmxqx sitelibdir\=./.gem.20260418-3988-4dmxqx clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-6dblle sitelibdir\=./.gem.20260418-4931-6dblle clean

@@ -3,16 +3,16 @@ current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bund
 creating Makefile
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/cgi-0.5.1/ext/cgi/escape
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-dv3bc9 sitelibdir\=./.gem.20260418-3988-dv3bc9 clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-zxo3t sitelibdir\=./.gem.20260418-4931-zxo3t clean
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/cgi-0.5.1/ext/cgi/escape
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-dv3bc9 sitelibdir\=./.gem.20260418-3988-dv3bc9
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-zxo3t sitelibdir\=./.gem.20260418-4931-zxo3t
 compiling escape.c
 linking shared-object cgi/escape.so
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/cgi-0.5.1/ext/cgi/escape
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-dv3bc9 sitelibdir\=./.gem.20260418-3988-dv3bc9 install
-/usr/bin/install -c -m 0755 escape.so ./.gem.20260418-3988-dv3bc9/cgi
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-zxo3t sitelibdir\=./.gem.20260418-4931-zxo3t install
+/usr/bin/install -c -m 0755 escape.so ./.gem.20260418-4931-zxo3t/cgi
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/cgi-0.5.1/ext/cgi/escape
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-dv3bc9 sitelibdir\=./.gem.20260418-3988-dv3bc9 clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-zxo3t sitelibdir\=./.gem.20260418-4931-zxo3t clean

@@ -13,10 +13,10 @@ checking for sys/resource.h... yes
 creating Makefile
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/nio4r-2.7.5/ext/nio4r
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-lmctda sitelibdir\=./.gem.20260418-3988-lmctda clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-4ivsbr sitelibdir\=./.gem.20260418-4931-4ivsbr clean
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/nio4r-2.7.5/ext/nio4r
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-lmctda sitelibdir\=./.gem.20260418-3988-lmctda
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-4ivsbr sitelibdir\=./.gem.20260418-4931-4ivsbr
 compiling bytebuffer.c
 compiling monitor.c
 compiling nio4r_ext.c
@@ -46,8 +46,8 @@ selector.c:525:5: warning: ignoring return value of ‘write’ declared with at
 linking shared-object nio4r_ext.so
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/nio4r-2.7.5/ext/nio4r
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-lmctda sitelibdir\=./.gem.20260418-3988-lmctda install
-/usr/bin/install -c -m 0755 nio4r_ext.so ./.gem.20260418-3988-lmctda
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-4ivsbr sitelibdir\=./.gem.20260418-4931-4ivsbr install
+/usr/bin/install -c -m 0755 nio4r_ext.so ./.gem.20260418-4931-4ivsbr
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/nio4r-2.7.5/ext/nio4r
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-lmctda sitelibdir\=./.gem.20260418-3988-lmctda clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-4ivsbr sitelibdir\=./.gem.20260418-4931-4ivsbr clean

@@ -6,10 +6,10 @@ checking for altzone in time.h with  -Werror... no
 creating Makefile
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/date-3.5.1/ext/date
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-s7acfs sitelibdir\=./.gem.20260418-3988-s7acfs clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-bkr0bl sitelibdir\=./.gem.20260418-4931-bkr0bl clean
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/date-3.5.1/ext/date
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-s7acfs sitelibdir\=./.gem.20260418-3988-s7acfs
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-bkr0bl sitelibdir\=./.gem.20260418-4931-bkr0bl
 compiling date_core.c
 compiling date_parse.c
 compiling date_strftime.c
@@ -17,8 +17,8 @@ compiling date_strptime.c
 linking shared-object date_core.so
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/date-3.5.1/ext/date
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-s7acfs sitelibdir\=./.gem.20260418-3988-s7acfs install
-/usr/bin/install -c -m 0755 date_core.so ./.gem.20260418-3988-s7acfs
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-bkr0bl sitelibdir\=./.gem.20260418-4931-bkr0bl install
+/usr/bin/install -c -m 0755 date_core.so ./.gem.20260418-4931-bkr0bl
 
 current directory: /home/runner/work/ar_lazy_preload/ar_lazy_preload/vendor/bundle/ruby/3.2.0/gems/date-3.5.1/ext/date
-make DESTDIR\= sitearchdir\=./.gem.20260418-3988-s7acfs sitelibdir\=./.gem.20260418-3988-s7acfs clean
+make DESTDIR\= sitearchdir\=./.gem.20260418-4931-bkr0bl sitelibdir\=./.gem.20260418-4931-bkr0bl clean
