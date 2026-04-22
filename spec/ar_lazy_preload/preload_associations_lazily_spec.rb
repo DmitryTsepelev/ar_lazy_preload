@@ -143,6 +143,14 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
         end
       end.to_not raise_error
     end
+
+    it "does not reset loaded relations" do
+      posts = Post.all.load
+      posts = posts.preload_associations_lazily
+      expect do
+        posts.size
+      end.to_not make_database_queries
+    end
   end
 
   describe "has_one through with STI" do

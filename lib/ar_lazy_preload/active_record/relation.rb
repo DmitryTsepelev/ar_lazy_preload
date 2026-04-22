@@ -44,7 +44,7 @@ module ArLazyPreload
     #
     # Same effect can be achieved by User.lazy_preload(posts: :comments)
     def preload_associations_lazily
-      spawn.tap { |relation| relation.preloads_associations_lazily = true }
+      tap { |relation| relation.preloads_associations_lazily = true }
     end
 
     # Specify relationships to be loaded lazily when association is loaded for the first time. For
