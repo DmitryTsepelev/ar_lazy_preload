@@ -3,6 +3,7 @@
 ## master
 
 - [PR [#91](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/91)] Fix extra queries for singular through-associations with STI ([@AlfonsoUceda][])
+- [PR [#93](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/93)] Fix extra queries for singular through-associations with STI ([@fatkodima][])
 
 ## 2.1.1 (2026-02-07)
 
@@ -133,3 +134,4 @@
 [@tatsuyafw]: https://github.com/tatsuyafw
 [@gbudiman]: https://github.com/gbudiman
 [@AlfonsoUceda]: https://github.com/AlfonsoUceda
+[@fatkodima]: https://github.com/fatkodima
