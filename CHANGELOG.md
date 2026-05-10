@@ -2,6 +2,8 @@
 
 ## master
 
+## 2.1.2 (2026-05-10)
+
 - [PR [#91](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/91)] Fix extra queries for singular through-associations with STI ([@AlfonsoUceda][])
 - [PR [#93](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/93)] Do not reset loaded relations when using preload_associations_lazily ([@fatkodima][])
 
