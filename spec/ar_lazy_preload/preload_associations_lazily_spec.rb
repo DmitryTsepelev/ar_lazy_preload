@@ -161,11 +161,7 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
     let!(:assignment1) { create(:assignment, application: application1) }
     let!(:assignment2) { create(:assignment, application: application2) }
 
-    # When STI is involved, the preloader uses a LEFT OUTER JOIN strategy
-    # which does not mark the intermediate belongs_to as loaded on each record.
-    # Previously, collect_intermediate_records called .reader on the unloaded
-    # association proxy, triggering an extra SELECT per record.
-    it "does not trigger extra queries for intermediate association" do
+    it "does not load the intermediate association the preloader leaves unloaded per record" do
       assignments = Assignment.preload_associations_lazily.to_a
 
       expect do
@@ -191,9 +187,7 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
     end
   end
 
-  describe "has_many through with a scope" do
-    # The scope makes the preloader load the intermediate records without
-    # assigning them to the owners, so the intermediate association stays unloaded.
+  describe "has_many through with a scope, which leaves the intermediate association unloaded" do
     # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
     it "loads intermediate association in one query after the through association" do
       users = User.preload_associations_lazily.to_a
@@ -205,12 +199,11 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
     end
   end
 
-  describe "has_many through with owners of two classes" do
+  describe "has_many through with owners of two classes (Post and PrivatePost)" do
     let!(:private_post) { create(:private_post, user: user1) }
     let!(:comment_3) { create(:comment, user: user2, post: private_post) }
     let!(:vote_5) { create(:vote, voteable: comment_3, user: user1) }
 
-    # The posts are a Post and a PrivatePost, and the preloader assigns the comments of both.
     # SELECT "votes".* FROM "votes" WHERE "votes"."voteable_id" IN (...)
     it "gives the intermediate records of all owners one context" do
       posts = Post.preload_associations_lazily.to_a
@@ -224,10 +217,8 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
   end
 
   describe "has_many through with records outside the through chain in the context" do
-    # The users have the intermediate association of Post#comment_users (comments), but not
-    # the through association.
     # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...)
-    it "keeps lazy preloading for the intermediate association of those records" do
+    it "keeps lazy preloading for the intermediate association (comments) of the users" do
       posts = Post.all.to_a
       users = User.all.to_a
       ArLazyPreload::Context.register(records: posts + users, auto_preload: true)

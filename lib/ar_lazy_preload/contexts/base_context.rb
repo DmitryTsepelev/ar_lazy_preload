@@ -78,8 +78,6 @@ module ArLazyPreload
         end
       end
 
-      # A record that already has a context keeps it, because that context can hold the records of
-      # other owners too.
       def register_intermediate_records(owners, name)
         associations = owners.map { |owner| owner.association(name) }.select(&:loaded?)
         targets = associations.flat_map(&:target).compact.reject(&:lazy_preload_context)
