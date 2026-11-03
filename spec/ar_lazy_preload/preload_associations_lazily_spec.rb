@@ -237,6 +237,21 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
         users.each { |user| user.comments.to_a }
       end.to make_database_queries(count: 1)
     end
+
+    # SELECT "votes".* FROM "votes" WHERE "votes"."voteable_id" IN (...)
+    it "keeps lazy preloading for the records of an intermediate association (comments) " \
+       "the users already have loaded" do
+      create(:comment, user: user2, post: post_2)
+      posts = Post.where(id: post_1.id).to_a
+      users = User.includes(:comments).where(id: user2.id).to_a
+      ArLazyPreload::Context.register(records: posts + users, auto_preload: true)
+      posts.each { |post| post.comment_users.to_a }
+      comments = users.flat_map { |user| user.comments.to_a }
+
+      expect do
+        comments.each { |comment| comment.votes.to_a }
+      end.to make_database_queries(count: 1)
+    end
   end
 
   describe "has_many through with a string :through option" do

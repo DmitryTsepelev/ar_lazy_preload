@@ -61,18 +61,12 @@ module ArLazyPreload
         )
       end
 
-      # Prepare one context for the intermediate records of a through chain. The intermediate
-      # association is marked as loaded for the whole context, so only when every record of the
-      # context that has it has it loaded: the Rails preloader does not always load it (for
-      # example with a scope on the through association or an STI target), and records outside
-      # the chain can have an association with the same name. Then it must stay available for
-      # lazy preloading.
+      # Prepare context for intermediate associations in through chains
       def prepare_through_association_contexts(association_name, filtered_records)
         intermediate_owners(association_name, filtered_records).each do |name, owners|
           next if association_loaded?(name)
 
           register_intermediate_records(owners, name)
-          loaded_association_names.add(name) if loaded_for_all_records?(name)
         end
       end
 
@@ -90,12 +84,6 @@ module ArLazyPreload
         associations = owners.map { |owner| owner.association(name) }.select(&:loaded?)
         targets = associations.flat_map(&:target).compact.reject(&:lazy_preload_context)
         ArLazyPreload::Context.register(records: targets, auto_preload: true)
-      end
-
-      def loaded_for_all_records?(name)
-        records.all? do |record|
-          !preloadable_record?(name, record) || record.association(name).loaded?
-        end
       end
 
       # Extract chain of intermediate association names for through associations
