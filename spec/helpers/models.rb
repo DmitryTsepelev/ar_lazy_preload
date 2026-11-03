@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   has_many :posts
   has_many :comments
   has_many :comments_on_posts, through: :posts, source: :comments
+  has_many :comments_on_posts_through_string, through: "posts", source: :comments
   has_many :thread_comments_on_posts, -> { threads }, through: :posts, source: :comments
   has_many :votes
   has_many :club_memberships, class_name: "ClubMember"

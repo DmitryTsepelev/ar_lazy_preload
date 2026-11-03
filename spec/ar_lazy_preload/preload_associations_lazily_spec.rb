@@ -238,4 +238,16 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
       end.to make_database_queries(count: 1)
     end
   end
+
+  describe "has_many through with a string :through option" do
+    # SELECT "votes".* FROM "votes" WHERE "votes"."voteable_type" = 'Post' AND ...
+    it "gives the intermediate records one context" do
+      users = User.preload_associations_lazily.to_a
+      comments = users.flat_map { |user| user.comments_on_posts_through_string.to_a }
+
+      expect do
+        comments.each { |comment| comment.post.votes.to_a }
+      end.to make_database_queries(count: 1)
+    end
+  end
 end

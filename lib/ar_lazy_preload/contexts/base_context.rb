@@ -107,7 +107,7 @@ module ArLazyPreload
         current_reflection = reflection
 
         while current_reflection&.options&.key?(:through)
-          through_name = current_reflection.options[:through]
+          through_name = current_reflection.options[:through].to_sym
           chain.unshift(through_name)
           current_reflection = klass.reflect_on_association(through_name)
         end
