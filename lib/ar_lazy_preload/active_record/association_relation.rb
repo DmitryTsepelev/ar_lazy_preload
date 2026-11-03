@@ -6,6 +6,7 @@ module ArLazyPreload
   module AssociationRelation
     def initialize(*args)
       super(*args)
+      self.preloads_associations_lazily = proxy_association.try(:preloads_associations_lazily?)
       setup_preloading_context unless ArLazyPreload.config.auto_preload?
     end
 

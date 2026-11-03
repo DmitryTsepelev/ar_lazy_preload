@@ -23,7 +23,7 @@ module ArLazyPreload
     # Enhanced #load method will check if association has not been loaded yet and add a context
     # for lazy preloading to loaded each record
     def load
-      need_context = !loaded?
+      need_context = !loaded? || scheduled?
       result = super
       if need_context
         Context.register(
@@ -43,21 +43,14 @@ module ArLazyPreload
     #   end
     #
     # Same effect can be achieved by User.lazy_preload(posts: :comments)
-    #
-    # A relation that is not loaded is copied. A has_many association copies its association
-    # scope: the association itself loads its records without reading the flag. A loaded relation
-    # does not run its query again: it registers the context only for its records without one, so
-    # a context that the records already share stays. A relation from load_async waits for its
-    # records first.
     def preload_associations_lazily
       return spawn.tap { |relation| relation.preloads_associations_lazily = true } unless loaded?
 
       self.preloads_associations_lazily = true
-      Context.register(
-        records: records.select { |record| record.lazy_preload_context.nil? },
-        association_tree: lazy_preload_values,
-        auto_preload: true
-      )
+      return self if scheduled?
+
+      preload_associations(records)
+      Context.register_auto_preload(records: records)
       self
     end
 
