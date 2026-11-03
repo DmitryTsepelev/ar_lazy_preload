@@ -189,9 +189,20 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
     end
 
     context "with load_async" do
-      # The suite runs in a transaction, so load_async runs the query at once but still returns a
-      # scheduled relation.
-      before { allow(Post.connection).to receive(:async_enabled?).and_return(true) }
+      # The in-memory database has no async executor, and other connections do not see its data,
+      # so the scheduled query runs at once on the same connection. The relation stays scheduled.
+      before do
+        allow(Post.connection).to receive(:async_enabled?).and_return(true)
+        allow(Post.connection_pool).to receive(:schedule_query, &:execute_or_skip)
+      end
+
+      # Rails apps start the session in the executor, which the suite does not run.
+      around do |example|
+        ActiveRecord::Base.asynchronous_queries_tracker.start_session
+        example.run
+      ensure
+        ActiveRecord::Base.asynchronous_queries_tracker.finalize_session
+      end
 
       it "does not wait for the records" do
         posts = Post.all.load_async.preload_associations_lazily
@@ -199,13 +210,13 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
         expect(posts).to be_scheduled
       end
 
-      # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+      # Rails main logs the posts query when the records are read, so only comments are counted
       it "loads association automatically when called after load_async" do
         posts = Post.all.load_async.preload_associations_lazily
 
         expect do
           posts.each { |post| post.comments.to_a }
-        end.to make_database_queries(count: 1)
+        end.to make_database_queries(count: 1, matching: /"comments"/)
       end
 
       # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
@@ -214,7 +225,7 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
 
         expect do
           posts.each { |post| post.comments.to_a }
-        end.to make_database_queries(count: 1)
+        end.to make_database_queries(count: 1, matching: /"comments"/)
       end
     end
   end
