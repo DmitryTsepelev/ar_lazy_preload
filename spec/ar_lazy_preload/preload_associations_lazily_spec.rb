@@ -353,11 +353,7 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
     let!(:assignment1) { create(:assignment, application: application1) }
     let!(:assignment2) { create(:assignment, application: application2) }
 
-    # When STI is involved, the preloader uses a LEFT OUTER JOIN strategy
-    # which does not mark the intermediate belongs_to as loaded on each record.
-    # Previously, collect_intermediate_records called .reader on the unloaded
-    # association proxy, triggering an extra SELECT per record.
-    it "does not trigger extra queries for intermediate association" do
+    it "does not load the intermediate association the preloader leaves unloaded per record" do
       assignments = Assignment.preload_associations_lazily.to_a
 
       expect do
@@ -370,6 +366,86 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
       assignments.each do |a|
         expect(a.candidate.lazy_preload_context).not_to be_nil
       end
+    end
+
+    # SELECT "applications".* FROM "applications" WHERE "applications"."id" IN (...)
+    it "loads intermediate association in one query after the through association" do
+      assignments = Assignment.preload_associations_lazily.to_a
+      assignments.each(&:candidate)
+
+      expect do
+        assignments.each(&:application)
+      end.to make_database_queries(count: 1)
+    end
+  end
+
+  describe "has_many through with a scope, which leaves the intermediate association unloaded" do
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
+    it "loads intermediate association in one query after the through association" do
+      users = User.preload_associations_lazily.to_a
+      users.each { |user| user.thread_comments_on_posts.to_a }
+
+      expect do
+        users.each { |user| user.posts.to_a }
+      end.to make_database_queries(count: 1)
+    end
+  end
+
+  describe "has_many through with owners of two classes (Post and PrivatePost)" do
+    let!(:private_post) { create(:private_post, user: user1) }
+    let!(:comment_3) { create(:comment, user: user2, post: private_post) }
+    let!(:vote_5) { create(:vote, voteable: comment_3, user: user1) }
+
+    # SELECT "votes".* FROM "votes" WHERE "votes"."voteable_id" IN (...)
+    it "gives the intermediate records of all owners one context" do
+      posts = Post.preload_associations_lazily.to_a
+      posts.each { |post| post.comment_users.to_a }
+      comments = posts.flat_map { |post| post.comments.to_a }
+
+      expect do
+        comments.each { |comment| comment.votes.to_a }
+      end.to make_database_queries(count: 1)
+    end
+  end
+
+  describe "has_many through with records outside the through chain in the context" do
+    # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...)
+    it "keeps lazy preloading for the intermediate association (comments) of the users" do
+      posts = Post.all.to_a
+      users = User.all.to_a
+      ArLazyPreload::Context.register(records: posts + users, auto_preload: true)
+      posts.each { |post| post.comment_users.to_a }
+
+      expect do
+        users.each { |user| user.comments.to_a }
+      end.to make_database_queries(count: 1)
+    end
+
+    # SELECT "votes".* FROM "votes" WHERE "votes"."voteable_id" IN (...)
+    it "keeps lazy preloading for the records of an intermediate association (comments) " \
+       "the users already have loaded" do
+      create(:comment, user: user2, post: post_2)
+      posts = Post.where(id: post_1.id).to_a
+      users = User.includes(:comments).where(id: user2.id).to_a
+      ArLazyPreload::Context.register(records: posts + users, auto_preload: true)
+      posts.each { |post| post.comment_users.to_a }
+      comments = users.flat_map { |user| user.comments.to_a }
+
+      expect do
+        comments.each { |comment| comment.votes.to_a }
+      end.to make_database_queries(count: 1)
+    end
+  end
+
+  describe "has_many through with a string :through option" do
+    # SELECT "votes".* FROM "votes" WHERE "votes"."voteable_type" = 'Post' AND ...
+    it "gives the intermediate records one context" do
+      users = User.preload_associations_lazily.to_a
+      comments = users.flat_map { |user| user.comments_on_posts_through_string.to_a }
+
+      expect do
+        comments.each { |comment| comment.post.votes.to_a }
+      end.to make_database_queries(count: 1)
     end
   end
 end
