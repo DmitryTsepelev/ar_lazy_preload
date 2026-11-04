@@ -4,6 +4,7 @@
 
 - [PR [#94](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/94)] Fix lazy preloading for has_many associations and loaded relations in preload_associations_lazily ([@AlfonsoUceda][])
 - [PR [#95](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/95)] Fix extra queries for intermediate associations of through chains ([@AlfonsoUceda][])
+- `preload_associations_lazily` on a relation that is not loaded yet returns a copy again, as in 2.1.0, and leaves the relation itself unchanged. Use the returned relation: calling `relation.preload_associations_lazily` on its own line no longer turns on lazy preloading for `relation` ([@DmitryTsepelev][])
 
 ## 2.1.2 (2026-05-10)
 
