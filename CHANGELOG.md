@@ -2,6 +2,8 @@
 
 ## master
 
+- [PR [#95](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/95)] Fix extra queries for intermediate associations of through chains ([@AlfonsoUceda][])
+
 ## 2.1.2 (2026-05-10)
 
 - [PR [#91](https://github.com/DmitryTsepelev/ar_lazy_preload/pull/91)] Fix extra queries for singular through-associations with STI ([@AlfonsoUceda][])

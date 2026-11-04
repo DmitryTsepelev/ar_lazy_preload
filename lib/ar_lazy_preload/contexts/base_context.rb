@@ -63,35 +63,25 @@ module ArLazyPreload
 
       # Prepare context for intermediate associations in through chains
       def prepare_through_association_contexts(association_name, filtered_records)
-        filtered_records.group_by(&:class).each do |klass, klass_records|
-          chain = through_association_chain(association_name, klass)
-          next if chain.empty?
+        intermediate_owners(association_name, filtered_records).each do |name, owners|
+          next if association_loaded?(name)
 
-          chain.each do |intermediate_name|
-            register_intermediate_context(klass, klass_records, intermediate_name)
+          register_intermediate_records(owners, name)
+        end
+      end
+
+      def intermediate_owners(association_name, filtered_records)
+        filtered_records.group_by(&:class).each_with_object({}) do |(klass, klass_records), owners|
+          through_association_chain(association_name, klass).each do |name|
+            (owners[name] ||= []).concat(klass_records)
           end
         end
       end
 
-      def register_intermediate_context(klass, klass_records, intermediate_name)
-        return if association_loaded?(intermediate_name)
-
-        reflection = klass.reflect_on_association(intermediate_name)
-        return if reflection.nil?
-
-        loaded_association_names.add(intermediate_name)
-
-        intermediate_records = collect_intermediate_records(klass_records, reflection)
-        return if intermediate_records.empty?
-
-        ArLazyPreload::Context.register(records: intermediate_records, auto_preload: true)
-      end
-
-      def collect_intermediate_records(klass_records, reflection)
-        klass_records.flat_map do |record|
-          record_association = record.association(reflection.name)
-          record_association.target
-        end.compact
+      def register_intermediate_records(owners, name)
+        associations = owners.map { |owner| owner.association(name) }.select(&:loaded?)
+        targets = associations.flat_map(&:target).compact.reject(&:lazy_preload_context)
+        ArLazyPreload::Context.register(records: targets, auto_preload: true)
       end
 
       # Extract chain of intermediate association names for through associations
@@ -103,7 +93,7 @@ module ArLazyPreload
         current_reflection = reflection
 
         while current_reflection&.options&.key?(:through)
-          through_name = current_reflection.options[:through]
+          through_name = current_reflection.options[:through].to_sym
           chain.unshift(through_name)
           current_reflection = klass.reflect_on_association(through_name)
         end
