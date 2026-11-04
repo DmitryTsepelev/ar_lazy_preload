@@ -20,5 +20,18 @@ module ArLazyPreload
         )
       end
     end
+
+    # Initiates auto preload context for given records, unless they already have one or skip
+    # preloading
+    def self.register_auto_preload(records:)
+      records_without_context, records_with_context =
+        records.partition { |record| record.lazy_preload_context.nil? }
+      # The whole context is replaced, so its records keep loading their associations together
+      lazy_contexts = records_with_context.map(&:lazy_preload_context).uniq.reject(&:auto_preload?)
+
+      records_to_register =
+        records_without_context.reject(&:skip_preload?) + lazy_contexts.flat_map(&:records)
+      register(records: records_to_register, auto_preload: true)
+    end
   end
 end

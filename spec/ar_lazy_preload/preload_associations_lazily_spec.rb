@@ -151,6 +151,198 @@ describe "ActiveRecord::Relation.preload_associations_lazily" do
         posts.size
       end.to_not make_database_queries
     end
+
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+    it "loads association of a loaded relation automatically" do
+      posts = Post.all.load
+
+      expect do
+        posts.preload_associations_lazily.each { |post| post.comments.to_a }
+      end.to make_database_queries(count: 1)
+    end
+
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+    it "loads association of a loaded relation with a lazy preload context automatically" do
+      posts = Post.lazy_preload(:user).load
+
+      expect do
+        posts.preload_associations_lazily.each { |post| post.comments.to_a }
+      end.to make_database_queries(count: 1)
+    end
+
+    # SELECT "comments".* FROM "comments" WHERE "comments"."user_id" IN (...)
+    it "loads association of association of a loaded relation with `includes` automatically" do
+      posts = Post.includes(:user).load
+
+      expect do
+        posts.preload_associations_lazily.each { |post| post.user.comments.to_a }
+      end.to make_database_queries(count: 1)
+    end
+
+    it "does not give a context to the records of a loaded relation that skip preloading" do
+      posts = Post.all.load
+      posts.first.skip_preload
+      posts.preload_associations_lazily
+
+      expect(posts.first.lazy_preload_context).to be_nil
+      expect(posts.last.lazy_preload_context).to be_a(ArLazyPreload::Contexts::AutoPreloadContext)
+    end
+
+    context "with load_async" do
+      # The in-memory database has no async executor, and other connections do not see its data,
+      # so the scheduled query runs at once on the same connection. The relation stays scheduled.
+      before do
+        allow(Post.connection).to receive(:async_enabled?).and_return(true)
+        allow(Post.connection_pool).to receive(:schedule_query, &:execute_or_skip)
+      end
+
+      # Rails apps start the session in the executor, which the suite does not run.
+      around do |example|
+        ActiveRecord::Base.asynchronous_queries_tracker.start_session
+        example.run
+      ensure
+        ActiveRecord::Base.asynchronous_queries_tracker.finalize_session
+      end
+
+      it "does not wait for the records" do
+        posts = Post.all.load_async.preload_associations_lazily
+
+        expect(posts).to be_scheduled
+      end
+
+      # Rails main logs the posts query when the records are read, so only comments are counted
+      it "loads association automatically when called after load_async" do
+        posts = Post.all.load_async.preload_associations_lazily
+
+        expect do
+          posts.each { |post| post.comments.to_a }
+        end.to make_database_queries(count: 1, matching: /"comments"/)
+      end
+
+      # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+      it "loads association automatically when called before load_async" do
+        posts = Post.preload_associations_lazily.load_async
+
+        expect do
+          posts.each { |post| post.comments.to_a }
+        end.to make_database_queries(count: 1, matching: /"comments"/)
+      end
+    end
+  end
+
+  describe "on a has_many association" do
+    let!(:post_3) { create(:post, user: user1) }
+    let!(:comment_3) { create(:comment, user: user2, post: post_3) }
+
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = ?
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+    it "loads association automatically" do
+      posts = User.find(user1.id).posts.preload_associations_lazily
+
+      expect do
+        posts.each { |post| post.comments.to_a }
+      end.to make_database_queries(count: 2)
+    end
+
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" = ? ORDER BY "posts"."id" ASC
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+    it "loads association automatically after a scope" do
+      posts = User.find(user1.id).posts.preload_associations_lazily.order(:id)
+
+      expect do
+        posts.each { |post| post.comments.to_a }
+      end.to make_database_queries(count: 2)
+    end
+
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+    it "loads association automatically after a scope when the association is loaded" do
+      user = User.find(user1.id)
+      user.posts.load
+      posts = user.posts.preload_associations_lazily.order(:id).to_a
+
+      expect do
+        posts.each { |post| post.comments.to_a }
+      end.to make_database_queries(count: 1)
+    end
+
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+    it "keeps the context that the owner context gave to the loaded associations" do
+      users = User.preload_associations_lazily.to_a
+      users.first.posts.to_a
+      posts = users.flat_map { |user| user.posts.preload_associations_lazily.to_a }
+
+      expect do
+        posts.each { |post| post.comments.to_a }
+      end.to make_database_queries(count: 1)
+    end
+
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+    it "loads association automatically when the owner has a lazy preload context" do
+      users = User.lazy_preload(posts: :comments).to_a
+
+      expect do
+        users.each do |user|
+          user.posts.preload_associations_lazily.each { |post| post.comments.to_a }
+        end
+      end.to make_database_queries(count: 2)
+    end
+
+    # SELECT "posts".* FROM "posts" WHERE "posts"."user_id" IN (...)
+    # SELECT "votes".* FROM "votes" WHERE "votes"."voteable_type" = ? AND ...
+    it "loads association out of the association tree of the owner context automatically" do
+      users = User.lazy_preload(posts: :comments).to_a
+
+      expect do
+        users.each do |user|
+          user.posts.preload_associations_lazily.each { |post| post.votes.to_a }
+        end
+      end.to make_database_queries(count: 2)
+    end
+
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+    it "loads association automatically after the association is read again" do
+      user = User.find(user1.id)
+      user.posts.load
+      posts = user.posts.preload_associations_lazily
+      user.posts.size
+      posts = posts.order(:id).to_a
+
+      expect do
+        posts.each { |post| post.comments.to_a }
+      end.to make_database_queries(count: 1)
+    end
+
+    # SELECT "comments".* FROM "comments" WHERE "comments"."post_id" IN (...)
+    it "loads association automatically after a scope that was built before the call" do
+      posts = User.find(user1.id).posts
+      posts.where(id: post_1.id).to_a
+      posts = posts.preload_associations_lazily.order(:id).to_a
+
+      expect do
+        posts.each { |post| post.comments.to_a }
+      end.to make_database_queries(count: 1)
+    end
+
+    it "returns the association" do
+      posts = User.find(user1.id).posts
+
+      expect(posts.preload_associations_lazily).to be(posts)
+    end
+
+    it "keeps the records built for the association" do
+      user = User.find(user1.id)
+      user.posts.build
+
+      expect(user.posts.preload_associations_lazily.to_a.size).to eq(3)
+    end
+
+    it "loads the association target" do
+      user = User.find(user1.id)
+      user.posts.preload_associations_lazily.each(&:id)
+
+      expect { user.posts.to_a }.to_not make_database_queries
+    end
   end
 
   describe "has_one through with STI" do

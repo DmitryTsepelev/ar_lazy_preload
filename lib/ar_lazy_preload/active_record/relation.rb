@@ -23,7 +23,7 @@ module ArLazyPreload
     # Enhanced #load method will check if association has not been loaded yet and add a context
     # for lazy preloading to loaded each record
     def load
-      need_context = !loaded?
+      need_context = !loaded? || scheduled?
       result = super
       if need_context
         Context.register(
@@ -44,7 +44,14 @@ module ArLazyPreload
     #
     # Same effect can be achieved by User.lazy_preload(posts: :comments)
     def preload_associations_lazily
-      tap { |relation| relation.preloads_associations_lazily = true }
+      return spawn.tap { |relation| relation.preloads_associations_lazily = true } unless loaded?
+
+      self.preloads_associations_lazily = true
+      return self if scheduled?
+
+      preload_associations(records)
+      Context.register_auto_preload(records: records)
+      self
     end
 
     # Specify relationships to be loaded lazily when association is loaded for the first time. For

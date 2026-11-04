@@ -23,7 +23,12 @@ module ArLazyPreload
     def skip_preload
       lazy_preload_context&.records&.delete(self)
       self.lazy_preload_context = nil
+      @skip_preload = true
       self
+    end
+
+    def skip_preload?
+      @skip_preload || false
     end
 
     def try_setup_auto_preload_context
